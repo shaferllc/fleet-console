@@ -26,9 +26,12 @@ jobs:
       contents: read
 
     steps:
+      # Do not persist GITHUB_TOKEN as a global github.com credential; it would override
+      # the PAT in the fleet-operator remote URL and subtree push would fail with 403.
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Require package push token
         env:

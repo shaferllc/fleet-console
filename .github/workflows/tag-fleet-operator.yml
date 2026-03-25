@@ -63,14 +63,15 @@ jobs:
           git fetch fleet-operator-release main
           MAIN_SHA="$(git rev-parse FETCH_HEAD)"
 
-          # Ignore peeled tag lines (^{}) from ls-remote
+          # Ignore peeled tag lines (^{}) from ls-remote. When there are no vX.Y.Z tags,
+          # grep exits 1 — do not fail the step under pipefail (treat as empty LATEST).
           LATEST="$(
             git ls-remote --tags fleet-operator-release |
               awk '$2 !~ /\^\{\}$/ { gsub(/^refs\/tags\//, "", $2); print $2 }' |
               grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
               sort -V |
               tail -1
-          )"
+          )" || true
 
           if [ -z "${LATEST}" ]; then
             NEXT="v1.0.0"

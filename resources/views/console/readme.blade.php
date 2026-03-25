@@ -1,6 +1,6 @@
 @extends('layouts.console')
 
-@section('title', $target['name'].' — README')
+@section('title', ($readmeTitle ?? $target['name']).' — README')
 
 @section('topbar_actions')
     <a href="{{ route('console.dashboard') }}" class="rounded-lg px-3 py-2 text-xs font-medium text-zinc-400 transition hover:bg-zinc-800/50 hover:text-white">
@@ -17,9 +17,15 @@
 @section('content')
     <header class="max-w-4xl">
         <p class="text-xs font-semibold uppercase tracking-[0.2em] text-cyan-500/90">Documentation</p>
-        <h1 class="fc-heading mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ $target['name'] }}</h1>
+        <h1 class="fc-heading mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">{{ $readmeTitle ?? $target['name'] }}</h1>
+        @if ($readmeSubtitle !== null && $readmeSubtitle !== '')
+            <p class="mt-2 text-sm leading-relaxed text-zinc-400">{{ $readmeSubtitle }}</p>
+        @endif
         @if ($description !== '')
             <p class="mt-3 text-base leading-relaxed text-zinc-400">{{ $description }}</p>
+        @endif
+        @if ($readmeFormat !== null && $readmeFormat !== '')
+            <p class="mt-2 text-[10px] font-medium uppercase tracking-wider text-zinc-600">Format: {{ $readmeFormat }}</p>
         @endif
         <div class="mt-6 flex flex-wrap items-center gap-3">
             @if ($siteUrl !== '')

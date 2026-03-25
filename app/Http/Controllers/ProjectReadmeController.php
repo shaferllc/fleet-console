@@ -32,6 +32,9 @@ class ProjectReadmeController extends Controller
         $error = null;
         $html = '';
         $raw = '';
+        $readmeTitle = null;
+        $readmeSubtitle = null;
+        $readmeFormat = null;
 
         if ($tokenMissing) {
             $error = 'No operator token is stored for this service — add one under Console → Services → Edit (must match FLEET_OPERATOR_TOKEN on the target app).';
@@ -45,7 +48,16 @@ class ProjectReadmeController extends Controller
 
                 if ($response->successful()) {
                     $data = $response->json();
+                    if (! is_array($data)) {
+                        $data = [];
+                    }
                     $raw = is_string($data['content'] ?? null) ? $data['content'] : '';
+                    $t = $data['title'] ?? null;
+                    $readmeTitle = is_string($t) && $t !== '' ? $t : null;
+                    $st = $data['subtitle'] ?? null;
+                    $readmeSubtitle = is_string($st) && $st !== '' ? $st : null;
+                    $fmt = $data['format'] ?? null;
+                    $readmeFormat = is_string($fmt) && $fmt !== '' ? $fmt : null;
                     $html = $raw !== '' ? Str::markdown($raw, [
                         'allow_unsafe_links' => false,
                     ]) : '';
@@ -65,6 +77,9 @@ class ProjectReadmeController extends Controller
             'html' => $html,
             'rawFallback' => $raw === '' && $error === null ? 'Empty README response.' : null,
             'error' => $error,
+            'readmeTitle' => $readmeTitle,
+            'readmeSubtitle' => $readmeSubtitle,
+            'readmeFormat' => $readmeFormat,
         ]);
     }
 }

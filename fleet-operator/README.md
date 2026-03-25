@@ -1,11 +1,12 @@
 # fleet-operator
 
+**Repository:** [github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator)  
 **Composer package:** `dply/fleet-operator` · **PHP** `^8.4`
 
 Shared **middleware**, **config**, and **OpenAPI** for applications that expose a Fleet Console–compatible **operator API**:
 
-- `GET {prefix}/summary` — JSON snapshot (metrics, health hints, anything your alerts care about)
-- `GET {prefix}/readme` — JSON with at least `content` (Markdown is typical); optional `format`, `title`
+- `GET {prefix}/summary` — JSON snapshot (see **Summary fields** below); extra keys are stored and can drive `FLEET_ALERT_METRIC_RULES`
+- `GET {prefix}/readme` — JSON with required `content` (Markdown is typical); optional `format`, `title`, `subtitle`
 
 Fleet Console polls `summary` and may open `readme` in the UI. Set **`FLEET_OPERATOR_TOKEN`** on this app and store the **same secret** for that service in Fleet Console (**Console → Services** → operator token for that row).
 
@@ -47,6 +48,25 @@ use Dply\FleetOperator\Http\Middleware\AuthenticateFleetOperator;
 
 Return JSON bodies (or your framework’s JSON response type) from those handlers.
 
+### Summary fields (all optional)
+
+Fleet Console **renders** these when present (still accepts any other JSON):
+
+| Field | Type | Purpose |
+|--------|------|--------|
+| `app` / `service` | string | Service id on the card |
+| `version` | string / number | Release label |
+| `git_sha` / `commit` | string | VCS revision (short hash shown) |
+| `runtime` / `php_version` | string | Runtime line |
+| `uptime_seconds` | int | Uptime (formatted) |
+| `region` | string or string[] | Region label(s) |
+| `deployed_at` / `build_at` | string | Deploy / build time |
+| `environment`, `generated_at`, `users`, `organizations` | various | Existing dashboard tiles |
+| `notes` / `status_message` | string | Highlighted status strip |
+| `links` | object | Map of label → **https** URL (link chips) |
+| `dependencies` | array | `{ name, ok?, healthy?, detail? }` rows |
+| `metrics` | object | Extra counters (key/value grid) |
+
 ### Readme JSON shape
 
 Fleet’s README view expects JSON similar to:
@@ -55,11 +75,12 @@ Fleet’s README view expects JSON similar to:
 {
   "format": "markdown",
   "title": "My product",
+  "subtitle": "Internal runbook",
   "content": "# Hello\n\n…"
 }
 ```
 
-`content` must be a string (can be empty).
+`content` must be a string (can be empty). `title` / `subtitle` override or augment the README page header in Fleet Console.
 
 ## Versioning
 
@@ -79,20 +100,23 @@ If Packagist still shows the old vendor, the registry entry was never updated: P
 
 `composer.json` includes `"replace": { "fleetphp/fleet-operator": "*" }` so projects that still list the old name can resolve the replacement when both are visible to Composer (e.g. after you abandon with a replacement, or while migrating).
 
-## Own Git repository
+## Repository layout
 
-This folder is a **standalone Composer package** (everything here is the repo root after a split).
+The **canonical Git remote** is **[github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator)** (this tree is the package root there).
 
-- **CI:** `.github/workflows/ci.yml` runs PHPUnit on PHP 8.4 and 8.5 once this directory is the root of a GitHub repository.
-- **From a monorepo** that keeps this tree at `fleet-operator/`, you can extract history with:
+- **CI:** `.github/workflows/ci.yml` runs PHPUnit on PHP 8.4 and 8.5 on pushes and PRs to that repository.
+- **Releases:** Tag **`v1.2.3`** on **shaferllc/fleet-operator** (workflow **Release** in this package repo, or push the tag manually). Packagist reads from that Git URL.
 
-  `git subtree split -P fleet-operator -b fleet-operator-release`
+**Fleet Console** (the dashboard app monorepo, if you use one) may still vendor a copy under `fleet-operator/` with a Composer **`path`** repository for local development. Sync that directory from this repo when needed, or depend on **`dply/fleet-operator`** via VCS:
 
-  Push branch `fleet-operator-release` to the new remote, set it as the default branch, then tag releases (e.g. `v1.0.0`).
-
-- **Releases:** In this monorepo use tag `fleet-operator/v1.2.3` (workflow **Release fleet-operator (package)**). In a standalone clone of this package, use tag `v1.2.3` (workflow `.github/workflows/release.yml`). You can also run the workflow from the Actions tab with a semver **version** input.
-
-- **Consume before Packagist:** in the host app `composer.json`, add a `repositories` entry with `"type": "vcs"` and the Git URL, then `composer require dply/fleet-operator:^1.0`.
+```json
+"repositories": [
+    { "type": "vcs", "url": "https://github.com/shaferllc/fleet-operator" }
+],
+"require": {
+    "dply/fleet-operator": "^1.0"
+}
+```
 
 ## License
 

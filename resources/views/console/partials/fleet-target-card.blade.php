@@ -98,46 +98,6 @@
             {{ \Illuminate\Support\Str::limit($row['error'] ?? 'Unknown error', 400) }}
         </p>
     @elseif (is_array($row['summary']))
-        <dl class="relative mt-5 grid gap-4 text-sm sm:grid-cols-2">
-            @if (isset($row['summary']['users']))
-                <div class="rounded-xl bg-zinc-950/30 p-3 ring-1 ring-zinc-800/60">
-                    <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Users</dt>
-                    <dd class="mt-1 font-mono text-lg text-white">{{ $row['summary']['users'] }}</dd>
-                </div>
-            @endif
-            @if (array_key_exists('organizations', $row['summary']) && $row['summary']['organizations'] !== null)
-                <div class="rounded-xl bg-zinc-950/30 p-3 ring-1 ring-zinc-800/60">
-                    <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Organizations</dt>
-                    <dd class="mt-1 font-mono text-lg text-white">{{ $row['summary']['organizations'] }}</dd>
-                </div>
-            @endif
-            @if (isset($row['summary']['environment']))
-                <div class="rounded-xl bg-zinc-950/30 p-3 ring-1 ring-zinc-800/60">
-                    <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Environment</dt>
-                    <dd class="mt-1 font-mono text-sm text-cyan-200/90">{{ $row['summary']['environment'] }}</dd>
-                </div>
-            @endif
-            @if (isset($row['summary']['generated_at']))
-                <div class="sm:col-span-2">
-                    <div class="rounded-xl bg-zinc-950/30 p-3 ring-1 ring-zinc-800/60">
-                        <dt class="text-xs font-medium uppercase tracking-wider text-zinc-500">Generated</dt>
-                        <dd class="mt-1 font-mono text-xs text-zinc-300">{{ $row['summary']['generated_at'] }}</dd>
-                    </div>
-                </div>
-            @endif
-        </dl>
-        @if (isset($row['summary']['metrics']) && is_array($row['summary']['metrics']))
-            <div class="relative mt-5 border-t border-zinc-800/80 pt-5">
-                <h3 class="text-[11px] font-bold uppercase tracking-[0.18em] text-zinc-500">Metrics</h3>
-                <dl class="mt-3 grid gap-3 text-sm sm:grid-cols-2">
-                    @foreach ($row['summary']['metrics'] as $metric => $value)
-                        <div class="flex items-baseline justify-between gap-3 rounded-lg bg-zinc-950/25 px-3 py-2 ring-1 ring-zinc-800/50">
-                            <dt class="text-zinc-500">{{ str_replace('_', ' ', $metric) }}</dt>
-                            <dd class="font-mono text-zinc-100">{{ $value }}</dd>
-                        </div>
-                    @endforeach
-                </dl>
-            </div>
-        @endif
+        @include('partials.fleet-summary-card-body', ['summary' => $row['summary']])
     @endif
 </li>

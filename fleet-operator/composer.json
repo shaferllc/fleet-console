@@ -3,6 +3,11 @@
     "description": "PHP middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
     "type": "library",
     "license": "MIT",
+    "homepage": "https://github.com/shaferllc/fleet-operator",
+    "support": {
+        "issues": "https://github.com/shaferllc/fleet-operator/issues",
+        "source": "https://github.com/shaferllc/fleet-operator"
+    },
     "replace": {
         "fleetphp/fleet-operator": "*"
     },

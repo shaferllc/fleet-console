@@ -17,7 +17,9 @@ Thanks for helping improve Fleet Console.
 
 ## Releases
 
-Maintainers: use GitHub Actions **Release Fleet Console** and **Release fleet-operator (package)** (or push semver tags — see [README § Releasing](README.md#releasing)).
+Maintainers: **Fleet Console** — GitHub Actions **Release Fleet Console** or push `v*.*.*` tags (see [README § Releasing](README.md#releasing)).
+
+**`dply/fleet-operator`** is developed in its own repository: **[github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator)**. Open issues and pull requests there for middleware, OpenAPI, or package `composer.json` changes. Release with `v*.*.*` tags on that repo (Packagist follows that remote). This monorepo may still contain a **`fleet-operator/`** mirror for local Composer `path` installs; keep it in sync when you vendor changes from the split repo.
 
 ## Security
 

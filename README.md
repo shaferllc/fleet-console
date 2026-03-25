@@ -13,7 +13,7 @@ Built with [Laravel](https://laravel.com) and PHP **8.4+**.
 - Optional **trusted IP** restriction for the UI and protected API routes (`FLEET_CONSOLE_TRUSTED_IPS`).
 - Optional **background polling** via the scheduler (`FLEET_BACKGROUND_POLL_ENABLED`).
 
-Optional companion Composer package **`dply/fleet-operator`** provides middleware and OpenAPI for apps that expose the operator surface (also vendored under `fleet-operator/` in this repo).
+Optional companion Composer package **`dply/fleet-operator`** provides middleware and OpenAPI for apps that expose the operator surface. **Source of truth:** [github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator). This repository keeps a **`fleet-operator/`** directory as a checkout mirror so Composer can resolve the package via a local `path` repository (see root `composer.json`); you can instead point Composer at the GitHub repo with a `vcs` repository entry if you do not need an embedded copy.
 
 ## Requirements
 
@@ -68,26 +68,26 @@ This keeps the OSS project small. A full user table and Laravel Breeze/Fortify w
 
 ## Releasing
 
-GitHub Actions create a **GitHub Release** with auto-generated notes when you publish a semver tag (or when you run the workflow manually).
+### Fleet Console (this repository)
 
-| Component | Tag format (monorepo) | Workflow |
-|-----------|----------------------|----------|
+GitHub Actions create a **GitHub Release** when you publish a semver tag or run the workflow manually.
+
+| Component | Tag format | Workflow |
+|-----------|------------|----------|
 | **Fleet Console** (this app) | `v1.2.3` | [Release Fleet Console](.github/workflows/release-console.yml) |
-| **`dply/fleet-operator`** | `fleet-operator/v1.2.3` | [Release fleet-operator (package)](.github/workflows/release-fleet-operator.yml) |
-
-**Option A — tag from git:**
 
 ```bash
 git tag -a v1.2.3 -m "Release v1.2.3"
 git push origin v1.2.3
-
-git tag -a fleet-operator/v1.0.1 -m "fleet-operator v1.0.1"
-git push origin fleet-operator/v1.0.1
 ```
 
-**Option B — Actions → workflow “Run workflow”:** enter `version` (no `v`), optional prerelease flag. That creates the tag and release in one step (no extra push needed).
+**Actions → “Release Fleet Console”:** enter `version` (no `v`), optional prerelease flag.
 
-After a **`fleet-operator/v*`** or standalone **`v*`** tag on the package repo, [Packagist](https://packagist.org) (if linked) picks up **`dply/fleet-operator`** automatically.
+### `dply/fleet-operator` (split package)
+
+The package lives in **[github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator)**. Release it there with tags **`v1.2.3`** (not `fleet-operator/v…`). [Packagist](https://packagist.org) (if the package is linked) updates from that repository.
+
+If you still maintain an embedded **`fleet-operator/`** copy inside this monorepo and want a release from here, you can use tag **`fleet-operator/v1.2.3`** and [Release fleet-operator (package)](.github/workflows/release-fleet-operator.yml) — that is optional; prefer tagging on **shaferllc/fleet-operator** for the canonical history and Packagist integration.
 
 ## License
 

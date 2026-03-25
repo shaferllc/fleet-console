@@ -1,3 +1,5 @@
+# Optional: only if you release the package from this monorepo (embedded fleet-operator/).
+# Canonical releases: tag v*.*.* on https://github.com/shaferllc/fleet-operator
 name: Release fleet-operator (package)
 
 on:

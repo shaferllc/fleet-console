@@ -42,31 +42,6 @@
         </div>
     @endif
 
-    <div class="fc-glass mt-8 max-w-3xl rounded-2xl border border-zinc-700/50 p-5 sm:p-6" data-fleet-shared-operator-token-toolkit>
-        <h2 class="fc-heading text-base font-semibold tracking-tight text-white">Shared token (all services)</h2>
-        <p class="mt-2 text-xs leading-relaxed text-zinc-400">
-            If every target app should use the <strong class="font-medium text-zinc-300">same</strong> operator secret, generate once and paste the line into <strong class="font-medium text-zinc-300">Fleet’s</strong>
-            <code class="font-mono text-zinc-300">.env</code> as <code class="font-mono text-xs text-cyan-200/90">FLEET_OPERATOR_TOKEN</code>
-            and into <strong class="font-medium text-zinc-300">each</strong> target app’s environment with the same variable name (check each product’s docs). Leave per-target tokens empty when using this.
-        </p>
-        <label for="fleet-shared-operator-env-line" class="mt-4 block text-xs font-medium text-zinc-500">Ready-to-paste line</label>
-        <input type="text" id="fleet-shared-operator-env-line" readonly
-            class="fc-input mt-1.5 w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-3 py-2.5 font-mono text-xs text-zinc-300"
-            value=""
-            placeholder="Click Generate, then copy — or use Add / Edit on a single service for a per-app token.">
-        <div class="mt-3 flex flex-wrap gap-2">
-            <button type="button" data-fleet-generate-shared-operator-token
-                class="rounded-lg border border-cyan-500/35 bg-cyan-950/40 px-3 py-2 text-xs font-medium text-cyan-100 transition hover:border-cyan-400/50 hover:bg-cyan-900/35">
-                Generate FLEET_OPERATOR_TOKEN line
-            </button>
-            <button type="button" data-fleet-copy-shared-operator-token
-                class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800/70">
-                Copy line
-            </button>
-        </div>
-        <p class="mt-2 min-h-[1.25rem] text-xs text-emerald-400/90" data-fleet-shared-operator-token-status role="status" aria-live="polite"></p>
-    </div>
-
     <div class="mt-10 flex flex-wrap items-center gap-3">
         <a href="{{ route('console.targets.create') }}" class="fc-btn-primary inline-flex rounded-xl px-4 py-2.5 text-sm font-semibold text-white">
             Add service

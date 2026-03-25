@@ -28,7 +28,12 @@ class UpdateFleetTargetRequest extends FormRequest
             'base_url' => ['required', 'string', 'max:512'],
             'site_url' => ['nullable', 'string', 'max:512'],
             'operator_path_prefix' => ['nullable', 'string', 'max:128'],
-            'operator_token' => ['nullable', 'string', 'max:8192'],
+            'operator_token' => [
+                'nullable',
+                'string',
+                'max:8192',
+                Rule::when($this->filled('operator_token'), ['min:8']),
+            ],
             'clear_operator_token' => ['sometimes', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:2147483647'],
             'is_enabled' => ['sometimes', 'boolean'],

@@ -18,13 +18,12 @@ class FleetTargetPoller
     public function pollAll(): array
     {
         $targets = config('fleet_console.targets', []);
-        $defaultToken = config('fleet_console.operator_token');
         $out = [];
         foreach ($targets as $target) {
             if (! is_array($target)) {
                 continue;
             }
-            $out[] = $this->pollTarget($target, $defaultToken);
+            $out[] = $this->pollTarget($target);
         }
 
         return $out;
@@ -36,13 +35,12 @@ class FleetTargetPoller
     public function pollTargetByKey(string $key): ?array
     {
         $targets = config('fleet_console.targets', []);
-        $defaultToken = config('fleet_console.operator_token');
         foreach ($targets as $target) {
             if (! is_array($target) || (string) ($target['key'] ?? '') !== $key) {
                 continue;
             }
 
-            return $this->pollTarget($target, $defaultToken);
+            return $this->pollTarget($target);
         }
 
         return null;
@@ -52,12 +50,12 @@ class FleetTargetPoller
      * @param  array<string, mixed>  $target
      * @return array<string, mixed>
      */
-    public function pollTarget(array $target, mixed $defaultToken): array
+    public function pollTarget(array $target): array
     {
         $key = (string) ($target['key'] ?? '');
         $name = (string) ($target['name'] ?? $key);
         $baseUrl = rtrim((string) ($target['base_url'] ?? ''), '/');
-        $token = $target['operator_token'] ?? $defaultToken;
+        $token = $target['operator_token'] ?? null;
         $operatorPrefix = (string) ($target['operator_path_prefix'] ?? '/api/operator');
         $operatorPrefix = '/'.ltrim(rtrim($operatorPrefix, '/'), '/');
 
@@ -96,7 +94,7 @@ class FleetTargetPoller
                 $missingParts[] = 'operator base URL';
             }
             if ($tokenMissing) {
-                $missingParts[] = 'bearer token for this Fleet install — set FLEET_OPERATOR_TOKEN on the Fleet host or a per-target token under Console → Services (same secret as FLEET_OPERATOR_TOKEN on the target app; the operator package there only protects the API, it does not configure Fleet)';
+                $missingParts[] = 'operator token for this service — set it under Console → Services → Edit (must match FLEET_OPERATOR_TOKEN on that target app)';
             }
             $configError = count($missingParts) === 1
                 ? 'Missing '.$missingParts[0].'.'

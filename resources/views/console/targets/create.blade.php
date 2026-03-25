@@ -62,10 +62,7 @@
                         in <code class="font-mono text-xs text-zinc-300">.env</code> (separate from operator tokens).
                     </li>
                     <li>
-                        Set <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">FLEET_OPERATOR_TOKEN</code>
-                        in <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">.env</code>
-                        to the <strong class="font-medium text-zinc-300">same</strong> secret as the target app. That token is sent on every poll unless you enter a
-                        <strong class="font-medium text-zinc-300">per-target operator token</strong> below (useful when one app uses a different secret).
+                        For each service, set the <strong class="font-medium text-zinc-300">Operator token</strong> in the form below to the <strong class="font-medium text-zinc-300">same</strong> secret as that target app’s operator token (often <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">FLEET_OPERATOR_TOKEN</code> there). Fleet stores one token per service — there is no shared operator token in Fleet’s <code class="font-mono text-xs text-zinc-300">.env</code>.
                     </li>
                     <li>
                         <strong class="font-medium text-zinc-300">Operator base URL</strong> is the origin only (no path): e.g.
@@ -104,7 +101,7 @@
 
     <div class="fc-glass mt-8 max-w-2xl rounded-2xl p-8">
         <h2 class="fc-heading text-lg font-semibold tracking-tight text-white">Service details</h2>
-        <p class="mt-1 text-xs text-zinc-500">Each field has a short “where” hint below. Tokens: use Fleet <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN</code> for all services, or fill per-target token here for an exception.</p>
+        <p class="mt-1 text-xs text-zinc-500">Each field has a short “where” hint below. The operator token is required per service and must match that app’s <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN</code> (or equivalent).</p>
         <form method="post" action="{{ route('console.targets.store') }}" class="mt-8 space-y-8">
             @csrf
             @include('console.targets._form', ['target' => null])

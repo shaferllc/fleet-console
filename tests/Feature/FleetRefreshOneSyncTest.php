@@ -17,7 +17,6 @@ class FleetRefreshOneSyncTest extends TestCase
             'fleet_console.targets' => [
                 ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test', 'operator_token' => 'tok'],
             ],
-            'fleet_console.operator_token' => 'tok',
             'fleet_console.http_verify' => false,
         ]);
 

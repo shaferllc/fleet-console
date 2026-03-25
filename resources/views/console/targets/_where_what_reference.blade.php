@@ -2,7 +2,7 @@
     <h3 class="fc-heading text-base font-semibold tracking-tight text-white">What to add where</h3>
     <p class="mt-2 text-xs leading-relaxed text-zinc-500">
         Each row is one kind of value and where it belongs. The <strong class="font-medium text-zinc-400">operator bearer secret</strong>
-        must match on the target app and on Fleet (global <code class="rounded bg-zinc-950 px-1 font-mono text-[11px] text-zinc-400">FLEET_OPERATOR_TOKEN</code> or the per-target field in this form).
+        is <strong class="font-medium text-zinc-400">per service</strong>: set it on the target app and store the same value in Fleet using this form’s <strong class="font-medium text-zinc-400">Operator token</strong> field.
     </p>
 
     <div class="mt-4 overflow-x-auto rounded-lg border border-zinc-800/80">
@@ -21,14 +21,9 @@
                     <td class="px-3 py-2.5 font-mono text-[11px] text-zinc-500 sm:text-xs">FLEET_OPERATOR_TOKEN=…</td>
                 </tr>
                 <tr class="align-top">
-                    <td class="px-3 py-2.5 font-medium text-zinc-300">Same secret for all services</td>
-                    <td class="px-3 py-2.5">Fleet <code class="whitespace-nowrap rounded bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-cyan-200/90">.env</code></td>
-                    <td class="px-3 py-2.5 font-mono text-[11px] text-zinc-500 sm:text-xs">FLEET_OPERATOR_TOKEN=… <span class="font-sans text-zinc-500">(leave per-target token empty)</span></td>
-                </tr>
-                <tr class="align-top">
-                    <td class="px-3 py-2.5 font-medium text-zinc-300">Secret for this service only</td>
-                    <td class="px-3 py-2.5">This form: <strong class="text-zinc-300">Per-target operator token</strong></td>
-                    <td class="px-3 py-2.5">Overrides Fleet global token for this row; must still match that app.</td>
+                    <td class="px-3 py-2.5 font-medium text-zinc-300">Same secret for Fleet to send</td>
+                    <td class="px-3 py-2.5">This form: <strong class="text-zinc-300">Operator token</strong></td>
+                    <td class="px-3 py-2.5">Stored per service in Fleet (encrypted). Must equal the target app’s operator token.</td>
                 </tr>
                 <tr class="align-top">
                     <td class="px-3 py-2.5 font-medium text-zinc-300">Console login</td>

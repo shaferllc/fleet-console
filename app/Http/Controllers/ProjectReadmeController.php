@@ -16,8 +16,7 @@ class ProjectReadmeController extends Controller
             abort(404);
         }
 
-        $defaultToken = config('fleet_console.operator_token');
-        $token = $target['operator_token'] ?? $defaultToken;
+        $token = $target['operator_token'] ?? null;
         $tokenMissing = ! is_string($token) || $token === '';
 
         $baseUrl = rtrim((string) ($target['base_url'] ?? ''), '/');
@@ -35,7 +34,7 @@ class ProjectReadmeController extends Controller
         $raw = '';
 
         if ($tokenMissing) {
-            $error = 'Fleet is not configured to send an operator bearer token (set FLEET_OPERATOR_TOKEN on Fleet or a per-target token; must match the target app).';
+            $error = 'No operator token is stored for this service — add one under Console → Services → Edit (must match FLEET_OPERATOR_TOKEN on the target app).';
         } else {
             try {
                 $response = Http::timeout(20)

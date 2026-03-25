@@ -34,7 +34,8 @@ Configure at minimum:
 | Variable | Purpose |
 |----------|---------|
 | `FLEET_CONSOLE_PASSWORD_HASH` or `FLEET_CONSOLE_PASSWORD` | Sign in to the web UI |
-| `FLEET_OPERATOR_TOKEN` | Bearer token sent to each target’s operator API (unless overridden per target) |
+
+After first login, add each monitored app under **Console → Services** and set an **operator token** per service (same value as `FLEET_OPERATOR_TOKEN` on that app). Tokens are not configured via Fleet’s `.env`.
 
 Generate a bcrypt hash (recommended):
 
@@ -61,7 +62,7 @@ See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verif
 |---------|-----------|
 | **Browser UI** | Shared password → session flag (`fleet.console` middleware). Not multi-user; use SSO or a reverse proxy in front if you need identities. |
 | **`/api/fleet/*` JSON** | Bearer token (`FLEET_CONSOLE_API_TOKEN`); separate from the dashboard password. |
-| **Target operator APIs** | Bearer `FLEET_OPERATOR_TOKEN` (or per-target token); configured on each monitored app. |
+| **Target operator APIs** | Each app uses its own secret (often `FLEET_OPERATOR_TOKEN` on that app); Fleet stores the matching token per service. |
 
 This keeps the OSS project small. A full user table and Laravel Breeze/Fortify would be a larger follow-up if you want native multi-account auth.
 

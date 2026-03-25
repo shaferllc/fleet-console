@@ -7,7 +7,7 @@ Shared **middleware**, **config**, and **OpenAPI** for applications that expose 
 - `GET {prefix}/summary` — JSON snapshot (metrics, health hints, anything your alerts care about)
 - `GET {prefix}/readme` — JSON with at least `content` (Markdown is typical); optional `format`, `title`
 
-Fleet Console polls `summary` and may open `readme` in the UI. Use the **same** `FLEET_OPERATOR_TOKEN` on the app and on Fleet (or a per-target token in the console).
+Fleet Console polls `summary` and may open `readme` in the UI. Set **`FLEET_OPERATOR_TOKEN`** on this app and store the **same secret** for that service in Fleet Console (**Console → Services** → operator token for that row).
 
 ## Should I use this package?
 

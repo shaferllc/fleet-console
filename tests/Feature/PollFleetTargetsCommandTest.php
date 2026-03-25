@@ -27,9 +27,8 @@ class PollFleetTargetsCommandTest extends TestCase
         config([
             'fleet_console.background_poll_enabled' => true,
             'fleet_console.http_verify' => false,
-            'fleet_console.operator_token' => 'op-token',
             'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
+                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test', 'operator_token' => 'op-token'],
             ],
         ]);
 

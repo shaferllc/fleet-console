@@ -24,7 +24,7 @@ class StoreFleetTargetRequest extends FormRequest
             'base_url' => ['required', 'string', 'max:512'],
             'site_url' => ['nullable', 'string', 'max:512'],
             'operator_path_prefix' => ['nullable', 'string', 'max:128'],
-            'operator_token' => ['nullable', 'string', 'max:8192'],
+            'operator_token' => ['required', 'string', 'min:8', 'max:8192'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:2147483647'],
             'is_enabled' => ['sometimes', 'boolean'],
         ];

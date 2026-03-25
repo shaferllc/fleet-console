@@ -684,46 +684,6 @@ document.addEventListener('click', async function (e) {
         return;
     }
 
-    const genShared = e.target.closest('[data-fleet-generate-shared-operator-token]');
-    if (genShared) {
-        const toolkit = genShared.closest('[data-fleet-shared-operator-token-toolkit]');
-        const lineInput = toolkit?.querySelector('#fleet-shared-operator-env-line');
-        const status = toolkit?.querySelector('[data-fleet-shared-operator-token-status]');
-        if (!(lineInput instanceof HTMLInputElement)) {
-            return;
-        }
-        const token = fleetSecureOperatorToken();
-        lineInput.value = `FLEET_OPERATOR_TOKEN=${token}`;
-        lineInput.focus();
-        lineInput.select();
-        fleetTokenUiStatus(
-            status,
-            'New line ready. Copy it into Fleet’s .env and each target app, then clear per-target tokens if you use this shared secret.',
-            'ok',
-        );
-        return;
-    }
-
-    const copyShared = e.target.closest('[data-fleet-copy-shared-operator-token]');
-    if (copyShared) {
-        const toolkit = copyShared.closest('[data-fleet-shared-operator-token-toolkit]');
-        const lineInput = toolkit?.querySelector('#fleet-shared-operator-env-line');
-        const status = toolkit?.querySelector('[data-fleet-shared-operator-token-status]');
-        if (!(lineInput instanceof HTMLInputElement)) {
-            return;
-        }
-        const v = lineInput.value.trim();
-        if (!v) {
-            fleetTokenUiStatus(status, 'Generate a line first.', 'err');
-            return;
-        }
-        const ok = await fleetClipboardWrite(v.endsWith('\n') ? v : `${v}\n`);
-        fleetTokenUiStatus(
-            status,
-            ok ? 'Copied. Paste into Fleet .env and each target app (same variable name on each side).' : 'Could not copy — select the field above and copy manually.',
-            ok ? 'ok' : 'err',
-        );
-    }
 });
 
 document.addEventListener('click', function (e) {

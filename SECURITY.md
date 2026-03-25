@@ -18,4 +18,4 @@ We aim to acknowledge reports within a few business days.
 
 ## Deployment notes
 
-Fleet Console is designed for **trusted networks**: it uses a **shared dashboard password** (session-based), optional **IP allowlisting** (`FLEET_CONSOLE_TRUSTED_IPS`), and separate **bearer tokens** for operator polling and read-only JSON APIs. Harden production with HTTPS, secure cookies, and network controls appropriate to your environment.
+Fleet Console is designed for **trusted networks**: it uses a **shared dashboard password** (session-based), optional **IP allowlisting** (`FLEET_CONSOLE_TRUSTED_IPS`), a **per-service operator token** (stored encrypted for polling each target app), and a separate bearer token for read-only JSON APIs (`FLEET_CONSOLE_API_TOKEN`). Harden production with HTTPS, secure cookies, and network controls appropriate to your environment.

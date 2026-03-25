@@ -39,7 +39,7 @@ class FleetTargetsAdminTest extends TestCase
                 'base_url' => 'https://alpha.test',
                 'site_url' => '',
                 'operator_path_prefix' => '/api/operator',
-                'operator_token' => '',
+                'operator_token' => 'alpha-op-token-32chars-min',
                 'sort_order' => 0,
                 'is_enabled' => '1',
             ])

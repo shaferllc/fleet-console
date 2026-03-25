@@ -34,9 +34,6 @@ class FleetTargetAdminController extends Controller
         $data = $request->validated();
         $prefix = $data['operator_path_prefix'] ?? '/api/operator';
         $data['operator_path_prefix'] = '/'.ltrim(rtrim((string) $prefix, '/'), '/');
-        if (empty($data['operator_token'])) {
-            $data['operator_token'] = null;
-        }
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
         $data['is_enabled'] = $request->boolean('is_enabled', true);
 
@@ -117,7 +114,7 @@ class FleetTargetAdminController extends Controller
         }
 
         $msg = $imported > 0
-            ? "Imported {$imported} new service(s). Existing keys were left unchanged."
+            ? "Imported {$imported} new service(s). Existing keys were left unchanged. Add an operator token per service under Edit — polling needs a token stored here for each app."
             : 'All catalog services already exist — nothing to import.';
 
         return redirect()

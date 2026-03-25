@@ -80,6 +80,7 @@
         <label for="operator_token" class="block text-sm font-medium text-zinc-300">Operator token</label>
         <input type="password" name="operator_token" id="operator_token" autocomplete="new-password"
             @if (! $isEdit) required @endif
+            value="{{ old('operator_token', '') }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="{{ $isEdit ? 'Leave blank to keep current token' : 'Generate or paste (min 8 characters), then Save' }}">
         <div class="mt-2 flex flex-wrap gap-2">

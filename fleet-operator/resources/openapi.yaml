@@ -1,0 +1,60 @@
+openapi: 3.0.3
+info:
+  title: Fleet operator API (app surface)
+  description: |
+    Exposed by each monitored application for Fleet Console (and compatible tools).
+    Typical path prefix is `/api/operator`; some hosts use `/api/v1/operator`.
+    Authenticate with `Authorization: Bearer <FLEET_OPERATOR_TOKEN>`.
+  version: 1.0.0
+servers:
+  - url: /
+    description: Same origin; prefix paths below with your operator_path_prefix.
+paths:
+  /summary:
+    get:
+      summary: Operator metrics / health snapshot
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Arbitrary JSON object (counts, flags, nested metrics). Fleet stores and optionally alerts on paths.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '401':
+          description: Missing or invalid bearer token
+        '404':
+          description: Operator API disabled (token not configured on app)
+  /readme:
+    get:
+      summary: Project README for in-console rendering
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: README payload
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [content]
+                properties:
+                  format:
+                    type: string
+                    example: markdown
+                  title:
+                    type: string
+                  content:
+                    type: string
+                    description: Raw README body (often Markdown)
+        '401':
+          description: Missing or invalid bearer token
+        '404':
+          description: Operator API disabled
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer

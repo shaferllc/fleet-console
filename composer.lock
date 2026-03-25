@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c57754c93ae34ac3b9b716a0fd2f2149",
+    "content-hash": "cbc4d4b0dd2761bd5c80fd442cf79467",
     "packages": [
         {
             "name": "brick/math",
@@ -507,6 +507,68 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "fleetphp/fleet-operator",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./fleet-operator",
+                "reference": "9e15ff8ba4ac94a11f0d85f7f87070cabce593b3"
+            },
+            "require": {
+                "illuminate/contracts": "^11.0|^12.0|^13.0",
+                "illuminate/http": "^11.0|^12.0|^13.0",
+                "illuminate/support": "^11.0|^12.0|^13.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^9.0|^10.0|^11.0",
+                "phpunit/phpunit": "^11.5.50|^12.5.8"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fleetphp\\FleetOperator\\FleetOperatorServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fleetphp\\FleetOperator\\": "src/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "Fleetphp\\FleetOperator\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "@php vendor/bin/phpunit"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fleet Console contributors"
+                }
+            ],
+            "description": "Laravel middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
+            "keywords": [
+                "fleet",
+                "laravel",
+                "monitoring",
+                "openapi",
+                "operator"
+            ],
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "fruitcake/php-cors",
@@ -8030,7 +8092,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "fleetphp/fleet-operator": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

@@ -76,11 +76,27 @@
         @enderror
     </div>
 
-    <div>
+    <div class="fleet-operator-token-toolkit" data-fleet-operator-token-toolkit>
         <label for="operator_token" class="block text-sm font-medium text-zinc-300">Per-target operator token</label>
         <input type="password" name="operator_token" id="operator_token" autocomplete="new-password"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="{{ $isEdit ? 'Leave blank to keep current token' : 'Optional; uses FLEET_OPERATOR_TOKEN if empty' }}">
+        <div class="mt-2 flex flex-wrap gap-2">
+            <button type="button" data-fleet-generate-operator-token
+                class="rounded-lg border border-cyan-500/35 bg-cyan-950/40 px-3 py-2 text-xs font-medium text-cyan-100 transition hover:border-cyan-400/50 hover:bg-cyan-900/35">
+                Generate token
+            </button>
+            <button type="button" data-fleet-copy-operator-token-only
+                class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800/70">
+                Copy token
+            </button>
+            <button type="button" data-fleet-copy-operator-target-env
+                class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-zinc-500 hover:bg-zinc-800/70">
+                Copy for target .env
+            </button>
+        </div>
+        <p class="mt-2 min-h-[1.25rem] text-xs text-emerald-400/90" data-fleet-operator-token-status role="status" aria-live="polite"></p>
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Flow:</span> Generate → <strong class="font-medium text-zinc-400">Copy for target .env</strong> → paste into that app’s environment (usually <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN=…</code>) → <strong class="font-medium text-zinc-400">Save</strong> this form so Fleet stores the same secret. Or leave empty and use the shared Fleet <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN</code> for all services.</p>
         <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> either leave empty and set the same secret in Fleet <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN</code> and on the target app, <strong class="font-medium text-zinc-400">or</strong> paste that secret here to override for this service only.</p>
         @error('operator_token')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>

@@ -1,5 +1,60 @@
 import './bootstrap';
 
+/** @returns {string} 64 hex chars (32 bytes) */
+function fleetSecureOperatorToken() {
+    const bytes = new Uint8Array(32);
+    crypto.getRandomValues(bytes);
+
+    return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+}
+
+/**
+ * @param {string} text
+ * @returns {Promise<boolean>}
+ */
+async function fleetClipboardWrite(text) {
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+
+            return true;
+        }
+    } catch {
+        // fall through
+    }
+    try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.left = '-9999px';
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+
+        return ok;
+    } catch {
+        return false;
+    }
+}
+
+/**
+ * @param {HTMLElement | null | undefined} el
+ * @param {string} msg
+ * @param {'ok' | 'err'} kind
+ */
+function fleetTokenUiStatus(el, msg, kind) {
+    if (!el) {
+        return;
+    }
+    el.textContent = msg;
+    el.className =
+        kind === 'err'
+            ? 'mt-2 min-h-[1.25rem] text-xs text-red-400/90'
+            : 'mt-2 min-h-[1.25rem] text-xs text-emerald-400/90';
+}
+
 function fleetHeaders() {
     const t = document.querySelector('meta[name="csrf-token"]');
 
@@ -558,6 +613,116 @@ document.addEventListener('click', function (e) {
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.hash === '#fleet-cards-grid') {
         fleetFocusFleetCardsGrid();
+    }
+});
+
+document.addEventListener('click', async function (e) {
+    const genPer = e.target.closest('[data-fleet-generate-operator-token]');
+    if (genPer) {
+        const toolkit = genPer.closest('[data-fleet-operator-token-toolkit]');
+        const input = toolkit?.querySelector('#operator_token');
+        const status = toolkit?.querySelector('[data-fleet-operator-token-status]');
+        if (!(input instanceof HTMLInputElement)) {
+            return;
+        }
+        const token = fleetSecureOperatorToken();
+        input.type = 'text';
+        input.value = token;
+        input.focus();
+        fleetTokenUiStatus(
+            status,
+            'Token generated. Use “Copy for target .env”, paste into that app’s environment, then Save here.',
+            'ok',
+        );
+        return;
+    }
+
+    const copyPer = e.target.closest('[data-fleet-copy-operator-token-only]');
+    if (copyPer) {
+        const toolkit = copyPer.closest('[data-fleet-operator-token-toolkit]');
+        const input = toolkit?.querySelector('#operator_token');
+        const status = toolkit?.querySelector('[data-fleet-operator-token-status]');
+        if (!(input instanceof HTMLInputElement)) {
+            return;
+        }
+        const v = input.value.trim();
+        if (!v) {
+            fleetTokenUiStatus(status, 'Nothing to copy — generate or paste a token first.', 'err');
+            return;
+        }
+        const ok = await fleetClipboardWrite(v);
+        fleetTokenUiStatus(
+            status,
+            ok ? 'Token copied. Paste into the target app’s secret/config (see its docs for the env name).' : 'Could not copy — select the field and copy manually.',
+            ok ? 'ok' : 'err',
+        );
+        return;
+    }
+
+    const copyEnv = e.target.closest('[data-fleet-copy-operator-target-env]');
+    if (copyEnv) {
+        const toolkit = copyEnv.closest('[data-fleet-operator-token-toolkit]');
+        const input = toolkit?.querySelector('#operator_token');
+        const status = toolkit?.querySelector('[data-fleet-operator-token-status]');
+        if (!(input instanceof HTMLInputElement)) {
+            return;
+        }
+        const v = input.value.trim();
+        if (!v) {
+            fleetTokenUiStatus(status, 'Nothing to copy — generate or paste a token first.', 'err');
+            return;
+        }
+        const line = `FLEET_OPERATOR_TOKEN=${v}`;
+        const ok = await fleetClipboardWrite(line.endsWith('\n') ? line : `${line}\n`);
+        fleetTokenUiStatus(
+            status,
+            ok
+                ? 'Copied FLEET_OPERATOR_TOKEN=… — paste into the target app .env (or rename the key if that product uses a different name).'
+                : 'Could not copy — copy the line from the field manually.',
+            ok ? 'ok' : 'err',
+        );
+        return;
+    }
+
+    const genShared = e.target.closest('[data-fleet-generate-shared-operator-token]');
+    if (genShared) {
+        const toolkit = genShared.closest('[data-fleet-shared-operator-token-toolkit]');
+        const lineInput = toolkit?.querySelector('#fleet-shared-operator-env-line');
+        const status = toolkit?.querySelector('[data-fleet-shared-operator-token-status]');
+        if (!(lineInput instanceof HTMLInputElement)) {
+            return;
+        }
+        const token = fleetSecureOperatorToken();
+        lineInput.value = `FLEET_OPERATOR_TOKEN=${token}`;
+        lineInput.focus();
+        lineInput.select();
+        fleetTokenUiStatus(
+            status,
+            'New line ready. Copy it into Fleet’s .env and each target app, then clear per-target tokens if you use this shared secret.',
+            'ok',
+        );
+        return;
+    }
+
+    const copyShared = e.target.closest('[data-fleet-copy-shared-operator-token]');
+    if (copyShared) {
+        const toolkit = copyShared.closest('[data-fleet-shared-operator-token-toolkit]');
+        const lineInput = toolkit?.querySelector('#fleet-shared-operator-env-line');
+        const status = toolkit?.querySelector('[data-fleet-shared-operator-token-status]');
+        if (!(lineInput instanceof HTMLInputElement)) {
+            return;
+        }
+        const v = lineInput.value.trim();
+        if (!v) {
+            fleetTokenUiStatus(status, 'Generate a line first.', 'err');
+            return;
+        }
+        const ok = await fleetClipboardWrite(v.endsWith('\n') ? v : `${v}\n`);
+        fleetTokenUiStatus(
+            status,
+            ok ? 'Copied. Paste into Fleet .env and each target app (same variable name on each side).' : 'Could not copy — select the field above and copy manually.',
+            ok ? 'ok' : 'err',
+        );
     }
 });
 

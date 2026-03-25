@@ -15,11 +15,16 @@
     </header>
 
     <div class="fc-glass mt-8 max-w-3xl rounded-2xl border border-cyan-500/15 p-6 sm:p-8">
-        <h2 class="fc-heading text-lg font-semibold tracking-tight text-white">Reference</h2>
-        <p class="mt-1 text-xs text-zinc-500">Same checklist as on Add service — what belongs in Fleet <code class="font-mono text-zinc-400">.env</code> vs this form vs the target app.</p>
-        <div class="mt-4">
-            @include('console.targets._where_what_reference')
-        </div>
+        <details class="group">
+            <summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg text-white outline-none focus-visible:ring-2 focus-visible:ring-cyan-500/40 [&::-webkit-details-marker]:hidden">
+                <span class="inline-block text-xs text-zinc-500 transition-transform duration-200 group-open:rotate-90" aria-hidden="true">▶</span>
+                <span class="fc-heading text-lg font-semibold tracking-tight">Reference</span>
+            </summary>
+            <p class="mt-3 text-xs text-zinc-500">Same checklist as on Add service — what belongs in Fleet <code class="font-mono text-zinc-400">.env</code> vs this form vs the target app.</p>
+            <div class="mt-4">
+                @include('console.targets._where_what_reference')
+            </div>
+        </details>
     </div>
 
     <div class="fc-glass mt-8 max-w-2xl rounded-2xl p-8">

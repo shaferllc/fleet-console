@@ -96,7 +96,7 @@ class FleetTargetPoller
                 $missingParts[] = 'operator base URL';
             }
             if ($tokenMissing) {
-                $missingParts[] = 'operator bearer token — set FLEET_OPERATOR_TOKEN on this Fleet host or add a per-target token when editing this service';
+                $missingParts[] = 'bearer token for this Fleet install — set FLEET_OPERATOR_TOKEN on the Fleet host or a per-target token under Console → Services (same secret as FLEET_OPERATOR_TOKEN on the target app; the operator package there only protects the API, it does not configure Fleet)';
             }
             $configError = count($missingParts) === 1
                 ? 'Missing '.$missingParts[0].'.'

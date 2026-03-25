@@ -35,7 +35,7 @@ class ProjectReadmeController extends Controller
         $raw = '';
 
         if ($tokenMissing) {
-            $error = 'Fleet operator token is not configured (set FLEET_OPERATOR_TOKEN or a per-target token).';
+            $error = 'Fleet is not configured to send an operator bearer token (set FLEET_OPERATOR_TOKEN on Fleet or a per-target token; must match the target app).';
         } else {
             try {
                 $response = Http::timeout(20)

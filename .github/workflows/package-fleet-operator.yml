@@ -9,6 +9,7 @@ on:
     paths:
       - 'fleet-operator/**'
       - '.github/workflows/package-fleet-operator.yml'
+  workflow_dispatch:
 
 defaults:
   run:

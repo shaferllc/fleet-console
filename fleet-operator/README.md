@@ -18,6 +18,12 @@ Fleet Console polls `summary` and may open `readme` in the UI. Set **`FLEET_OPER
 | Want a published OpenAPI file per release | Only internal docs in a wiki |
 | Semver when response/auth rules evolve | API never changes |
 
+## GitHub Actions
+
+- **On [shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator):** workflow **CI** lives at `.github/workflows/ci.yml` on the default branch (`main`). Open **Actions** → **CI** — you should see runs on each push/PR. Use **Run workflow** if you add `workflow_dispatch` (included in this repo) to run without a new commit.
+- **Release:** `.github/workflows/release.yml` creates a GitHub Release when you push a tag `v1.2.3` or run the workflow with a version. That file must exist on the package repo (push it if you only see CI in the Actions sidebar).
+- **Fleet Console monorepo:** GitHub **does not** run YAML under `fleet-operator/.github/` for the parent repo. Use the monorepo root workflow `package-fleet-operator.yml` (path filter `fleet-operator/**`) — or **Actions → Run workflow** after enabling `workflow_dispatch` on that file.
+
 ## Install
 
 ```bash

@@ -80,18 +80,33 @@ class FleetTargetPoller
             'operator_readme_url' => $readmeUrl,
         ];
 
-        if ($key === '' || $baseUrl === '' || ! is_string($token) || $token === '') {
+        $tokenMissing = ! is_string($token) || $token === '';
+        if ($key === '' || $baseUrl === '' || $tokenMissing) {
             $hk = $key !== '' ? $key : '—';
             $lat = $this->history->latencyPercentiles($hk, 24);
             $lat7 = $this->history->latencyPercentilesSevenDaysOrRaw($hk);
             $rollupThreshold = (int) config('fleet_console.daily_rollup_sparkline_after_samples', 800);
             $raw7 = $this->history->rawSampleCount($hk, 168);
 
+            $missingParts = [];
+            if ($key === '') {
+                $missingParts[] = 'target key';
+            }
+            if ($baseUrl === '') {
+                $missingParts[] = 'operator base URL';
+            }
+            if ($tokenMissing) {
+                $missingParts[] = 'operator bearer token — set FLEET_OPERATOR_TOKEN on this Fleet host or add a per-target token when editing this service';
+            }
+            $configError = count($missingParts) === 1
+                ? 'Missing '.$missingParts[0].'.'
+                : 'Missing: '.implode('; ', $missingParts).'.';
+
             return array_merge($baseRow, [
                 'ok' => false,
                 'status' => null,
                 'summary' => null,
-                'error' => 'Missing key, base_url, or operator token.',
+                'error' => $configError,
                 'latency_ms' => null,
                 'sparkline' => $this->history->sparklineBits($hk, 24),
                 'sparkline_7d' => $this->history->sparklineBits($hk, 24 * 7),

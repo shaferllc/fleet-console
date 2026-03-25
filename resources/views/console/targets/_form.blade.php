@@ -11,7 +11,7 @@
             pattern="[a-z0-9-]+"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="beacon">
-        <p class="mt-1.5 text-xs text-zinc-500">Lowercase letters, numbers, and hyphens only (used in URLs).</p>
+        <p class="mt-1.5 text-xs text-zinc-500">Lowercase letters, numbers, hyphens only. <span class="text-zinc-400">Where:</span> only this form / Fleet DB — not on the target app.</p>
         @error('key')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -23,6 +23,7 @@
             value="{{ old('name', $target?->name) }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="Beacon">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — label on the dashboard card.</p>
         @error('name')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -33,6 +34,7 @@
         <textarea name="description" id="description" rows="3"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="Optional">{{ old('description', $target?->description) }}</textarea>
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — optional subtitle on the card.</p>
         @error('description')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -44,6 +46,7 @@
             value="{{ old('base_url', $target?->base_url) }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="https://beacon.example.com">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — public origin Fleet uses to call <code class="font-mono text-cyan-200/80">…/summary</code> (scheme + host, no path).</p>
         @error('base_url')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -55,6 +58,7 @@
             value="{{ old('site_url', $target?->site_url) }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="Defaults to operator base if empty">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — optional “Open site” link; leave empty to use operator base URL.</p>
         @error('site_url')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -66,6 +70,7 @@
             value="{{ old('operator_path_prefix', $target?->operator_path_prefix ?? '/api/operator') }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="/api/operator">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> must match the target app’s operator routes (often <code class="font-mono text-cyan-200/80">/api/operator</code>; some apps use <code class="font-mono text-cyan-200/80">/api/v1/operator</code>).</p>
         @error('operator_path_prefix')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -76,6 +81,7 @@
         <input type="password" name="operator_token" id="operator_token" autocomplete="new-password"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
             placeholder="{{ $isEdit ? 'Leave blank to keep current token' : 'Optional; uses FLEET_OPERATOR_TOKEN if empty' }}">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> either leave empty and set the same secret in Fleet <code class="font-mono text-zinc-400">FLEET_OPERATOR_TOKEN</code> and on the target app, <strong class="font-medium text-zinc-400">or</strong> paste that secret here to override for this service only.</p>
         @error('operator_token')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -93,6 +99,7 @@
         <input type="number" name="sort_order" id="sort_order" min="0"
             value="{{ old('sort_order', $target?->sort_order ?? 0) }}"
             class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — order in the Services list (lower first).</p>
         @error('sort_order')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
@@ -105,6 +112,7 @@
                 @checked(old('is_enabled', $target === null ? true : $target->is_enabled))>
             Enabled (included in dashboard and polls)
         </label>
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> only this form — off pauses polling and hides the card.</p>
         @error('is_enabled')
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror

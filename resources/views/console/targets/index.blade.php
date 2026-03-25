@@ -24,6 +24,10 @@
         <p class="mt-3 text-base leading-relaxed text-zinc-400">
             When at least one service is enabled here, this list replaces file and <code class="font-mono text-xs text-zinc-300">FLEET_CONSOLE_TARGETS</code> defaults. Leave the database empty to keep using env/config.
         </p>
+        <p class="mt-3 text-sm leading-relaxed text-zinc-500">
+            Open <a href="{{ route('console.targets.create') }}" class="font-medium text-cyan-400 underline decoration-cyan-500/35 underline-offset-2 hover:text-cyan-300">Add service</a>
+            or any <strong class="font-medium text-zinc-400">Edit</strong> link for a printable-style table: what goes in the target app <code class="font-mono text-xs text-zinc-400">.env</code>, what goes in Fleet’s <code class="font-mono text-xs text-zinc-400">.env</code>, and what goes in each form field.
+        </p>
     </header>
 
     @if (session('status'))

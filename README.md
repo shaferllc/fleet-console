@@ -1,77 +1,101 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Fleet Console
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Web dashboard that **polls each service’s operator HTTP API** (summary + readme JSON), shows health at a glance, and can **alert** when things go wrong. Optional **read-only JSON APIs** support integrations without using the browser UI.
 
-## About Laravel
+Built with [Laravel](https://laravel.com) and PHP **8.4+**.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Features
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Password-protected **console** (session) — one shared secret for small teams; optional **bcrypt hash** in `.env` instead of a plain password.
+- **Services** (targets) with base URL, operator path prefix, per-service tokens, sort order, and enable/disable.
+- **Dashboard** with comparison, per-service cards, sparklines, and alert timeline.
+- **Read-only HTTP API** under `/api/fleet/*` when `FLEET_CONSOLE_API_TOKEN` is set (bearer or `X-Fleet-Api-Token`).
+- Optional **trusted IP** restriction for the UI and protected API routes (`FLEET_CONSOLE_TRUSTED_IPS`).
+- Optional **background polling** via the scheduler (`FLEET_BACKGROUND_POLL_ENABLED`).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Optional companion Composer package **`dply/fleet-operator`** provides middleware and OpenAPI for apps that expose the operator surface (also vendored under `fleet-operator/` in this repo).
 
-## Learning Laravel
+## Requirements
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- PHP **8.4+**, Composer, Node.js (for building front-end assets).
+- SQLite (default), or another Laravel-supported database.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+## Quick start
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+cp .env.example .env
+php artisan key:generate
+touch database/database.sqlite   # if using sqlite
+php artisan migrate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Configure at minimum:
 
-## Fleet Console
+| Variable | Purpose |
+|----------|---------|
+| `FLEET_CONSOLE_PASSWORD_HASH` or `FLEET_CONSOLE_PASSWORD` | Sign in to the web UI |
+| `FLEET_OPERATOR_TOKEN` | Bearer token sent to each target’s operator API (unless overridden per target) |
 
-Password-only dashboard that polls each fleet app’s operator API. Configure `FLEET_CONSOLE_PASSWORD`, `FLEET_OPERATOR_TOKEN` (same value as on each target app), and optional `FLEET_CONSOLE_TARGET_URL_TEMPLATE` in `.env`. Default targets live in `config/fleet_targets.php`.
+Generate a bcrypt hash (recommended):
 
-| Method | Path | Description |
-|--------|------|-------------|
-| GET | `/login` | Password sign-in |
-| POST | `/login` | Submit password |
-| GET | `/` | Aggregated operator summaries |
-| GET | `/project/{key}` | Rendered README for that target (fetches `GET /api/operator/readme` on the app) |
-| POST | `/logout` | End session |
+```bash
+php -r "echo password_hash('your-long-random-secret', PASSWORD_BCRYPT), PHP_EOL;"
+```
 
-Each Laravel fleet app exposes (when `FLEET_OPERATOR_TOKEN` is set). Most apps use **`/api/operator/…`**; **Dply** uses **`/api/v1/operator/…`** (set `operator_path_prefix` on that target if you override targets JSON).
+Put the result in `FLEET_CONSOLE_PASSWORD_HASH=` in `.env`.
 
-| Method | Path (typical) | Description |
-|--------|----------------|-------------|
-| GET | `…/summary` | JSON metrics snapshot |
-| GET | `…/readme` | Root `README.md` as JSON (`format`, `content`, `title`) |
+Then:
 
-## Contributing
+```bash
+composer run setup   # or: composer install && npm install && npm run build
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Open `/login`, then add or import services under **Console → Services**. Example seed rows live in `config/fleet_targets.php`; once the database has targets, the UI uses stored rows instead of the file list.
 
-## Code of Conduct
+See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verify options.
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## Authentication model
 
-## Security Vulnerabilities
+| Surface | Mechanism |
+|---------|-----------|
+| **Browser UI** | Shared password → session flag (`fleet.console` middleware). Not multi-user; use SSO or a reverse proxy in front if you need identities. |
+| **`/api/fleet/*` JSON** | Bearer token (`FLEET_CONSOLE_API_TOKEN`); separate from the dashboard password. |
+| **Target operator APIs** | Bearer `FLEET_OPERATOR_TOKEN` (or per-target token); configured on each monitored app. |
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+This keeps the OSS project small. A full user table and Laravel Breeze/Fortify would be a larger follow-up if you want native multi-account auth.
+
+## Releasing
+
+GitHub Actions create a **GitHub Release** with auto-generated notes when you publish a semver tag (or when you run the workflow manually).
+
+| Component | Tag format (monorepo) | Workflow |
+|-----------|----------------------|----------|
+| **Fleet Console** (this app) | `v1.2.3` | [Release Fleet Console](.github/workflows/release-console.yml) |
+| **`dply/fleet-operator`** | `fleet-operator/v1.2.3` | [Release fleet-operator (package)](.github/workflows/release-fleet-operator.yml) |
+
+**Option A — tag from git:**
+
+```bash
+git tag -a v1.2.3 -m "Release v1.2.3"
+git push origin v1.2.3
+
+git tag -a fleet-operator/v1.0.1 -m "fleet-operator v1.0.1"
+git push origin fleet-operator/v1.0.1
+```
+
+**Option B — Actions → workflow “Run workflow”:** enter `version` (no `v`), optional prerelease flag. That creates the tag and release in one step (no extra push needed).
+
+After a **`fleet-operator/v*`** or standalone **`v*`** tag on the package repo, [Packagist](https://packagist.org) (if linked) picks up **`dply/fleet-operator`** automatically.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT — see [LICENSE](LICENSE).
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](SECURITY.md).

@@ -42,6 +42,6 @@
         </form>
     </div>
     <p class="mt-8 text-center text-xs text-zinc-600">
-        Internal use — keep this password private.
+        Use a strong secret and restrict network access (VPN, IP allowlist, reverse proxy auth) in production.
     </p>
 @endsection

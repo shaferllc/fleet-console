@@ -24,16 +24,25 @@ class ConsoleAuthController extends Controller
             'password' => ['required', 'string'],
         ]);
 
-        $expected = config('fleet_console.password');
-        if (! is_string($expected) || $expected === '') {
-            throw ValidationException::withMessages([
-                'password' => __('Fleet console login is not configured (set FLEET_CONSOLE_PASSWORD).'),
-            ]);
-        }
+        $password = (string) $request->input('password');
+        $expectedHash = config('fleet_console.password_hash');
+        $expectedPlain = config('fleet_console.password');
 
-        if (! hash_equals(hash('sha256', $expected), hash('sha256', $request->input('password')))) {
+        if (is_string($expectedHash) && $expectedHash !== '') {
+            if (! password_verify($password, $expectedHash)) {
+                throw ValidationException::withMessages([
+                    'password' => __('Invalid password.'),
+                ]);
+            }
+        } elseif (is_string($expectedPlain) && $expectedPlain !== '') {
+            if (! hash_equals(hash('sha256', $expectedPlain), hash('sha256', $password))) {
+                throw ValidationException::withMessages([
+                    'password' => __('Invalid password.'),
+                ]);
+            }
+        } else {
             throw ValidationException::withMessages([
-                'password' => __('Invalid password.'),
+                'password' => __('Fleet console login is not configured (set FLEET_CONSOLE_PASSWORD_HASH or FLEET_CONSOLE_PASSWORD).'),
             ]);
         }
 

@@ -1,14 +1,19 @@
 {
     "name": "dply/fleet-operator",
-    "description": "Laravel middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
+    "description": "PHP middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
     "type": "library",
     "license": "MIT",
+    "replace": {
+        "fleetphp/fleet-operator": "*"
+    },
     "keywords": [
-        "laravel",
+        "php",
         "fleet",
         "operator",
         "monitoring",
-        "openapi"
+        "openapi",
+        "middleware",
+        "http"
     ],
     "authors": [
         {

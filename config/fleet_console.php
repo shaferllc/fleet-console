@@ -68,6 +68,7 @@ $alertWebhookUrls = array_values(array_unique($alertWebhookUrls));
 
 return [
     'password' => env('FLEET_CONSOLE_PASSWORD', ''),
+    'password_hash' => env('FLEET_CONSOLE_PASSWORD_HASH', ''),
     'operator_token' => env('FLEET_OPERATOR_TOKEN', ''),
     'http_verify' => filter_var(env('FLEET_CONSOLE_HTTP_VERIFY', true), FILTER_VALIDATE_BOOL),
     'targets' => $targets,

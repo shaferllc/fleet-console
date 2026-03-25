@@ -15,8 +15,8 @@
         }
     ],
     "require": {
-        "php": "^8.3",
-        "fleetphp/fleet-operator": "@dev",
+        "php": "^8.4",
+        "dply/fleet-operator": "@dev",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },

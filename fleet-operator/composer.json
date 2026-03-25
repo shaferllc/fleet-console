@@ -1,5 +1,5 @@
 {
-    "name": "fleetphp/fleet-operator",
+    "name": "dply/fleet-operator",
     "description": "Laravel middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
     "type": "library",
     "license": "MIT",
@@ -16,7 +16,7 @@
         }
     ],
     "require": {
-        "php": "^8.2",
+        "php": "^8.4",
         "illuminate/contracts": "^11.0|^12.0|^13.0",
         "illuminate/http": "^11.0|^12.0|^13.0",
         "illuminate/support": "^11.0|^12.0|^13.0"
@@ -27,18 +27,18 @@
     },
     "autoload": {
         "psr-4": {
-            "Fleetphp\\FleetOperator\\": "src/"
+            "Dply\\FleetOperator\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Fleetphp\\FleetOperator\\Tests\\": "tests/"
+            "Dply\\FleetOperator\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Fleetphp\\FleetOperator\\FleetOperatorServiceProvider"
+                "Dply\\FleetOperator\\FleetOperatorServiceProvider"
             ]
         }
     },

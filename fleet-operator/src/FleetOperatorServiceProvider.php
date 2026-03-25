@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetphp\FleetOperator;
+namespace Dply\FleetOperator;
 
 use Illuminate\Support\ServiceProvider;
 

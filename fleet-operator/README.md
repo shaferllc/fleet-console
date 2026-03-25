@@ -1,6 +1,6 @@
 # fleet-operator
 
-**Composer package:** `fleetphp/fleet-operator`
+**Composer package:** `dply/fleet-operator` · **PHP** `^8.4`
 
 Shared **middleware**, **config**, and **OpenAPI** for Laravel apps that expose a Fleet Console–compatible **operator API**:
 
@@ -20,7 +20,7 @@ Fleet Console polls `summary` and may open `readme` in the UI. Use the **same** 
 ## Install
 
 ```bash
-composer require fleetphp/fleet-operator
+composer require dply/fleet-operator
 ```
 
 Publish config (optional):
@@ -48,7 +48,7 @@ Most apps use `api/operator`. Dply-style stacks often use `api/v1/operator`.
 ```php
 <?php
 
-use Fleetphp\FleetOperator\Http\Middleware\AuthenticateFleetOperator;
+use Dply\FleetOperator\Http\Middleware\AuthenticateFleetOperator;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/operator')
@@ -81,21 +81,20 @@ Follow [SemVer](https://semver.org/). Bump **minor** when adding optional JSON f
 
 ## Packagist
 
-After pushing to GitHub/GitLab, submit the repository URL on [packagist.org](https://packagist.org/packages/submit).  
-You may rename the vendor in `composer.json` before the first tag if `fleetphp` is not yours.
+After pushing to GitHub/GitLab, submit the repository URL on [packagist.org](https://packagist.org/packages/submit).
 
 ## Own Git repository
 
 This folder is a **standalone Composer package** (everything here is the repo root after a split).
 
-- **CI:** `.github/workflows/ci.yml` runs PHPUnit on PHP 8.3 and 8.4 once this directory is the root of a GitHub repository.
+- **CI:** `.github/workflows/ci.yml` runs PHPUnit on PHP 8.4 and 8.5 once this directory is the root of a GitHub repository.
 - **From a monorepo** that keeps this tree at `fleet-operator/`, you can extract history with:
 
   `git subtree split -P fleet-operator -b fleet-operator-release`
 
   Push branch `fleet-operator-release` to the new remote, set it as the default branch, then tag releases (e.g. `v1.0.0`).
 
-- **Consume before Packagist:** in the host app `composer.json`, add a `repositories` entry with `"type": "vcs"` and the Git URL, then `composer require fleetphp/fleet-operator:^1.0`.
+- **Consume before Packagist:** in the host app `composer.json`, add a `repositories` entry with `"type": "vcs"` and the Git URL, then `composer require dply/fleet-operator:^1.0`.
 
 ## License
 

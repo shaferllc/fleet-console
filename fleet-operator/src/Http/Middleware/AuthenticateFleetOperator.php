@@ -1,6 +1,6 @@
 <?php
 
-namespace Fleetphp\FleetOperator\Http\Middleware;
+namespace Dply\FleetOperator\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;

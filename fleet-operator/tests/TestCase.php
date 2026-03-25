@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Fleetphp\FleetOperator\Tests;
+namespace Dply\FleetOperator\Tests;
 
-use Fleetphp\FleetOperator\FleetOperatorServiceProvider;
+use Dply\FleetOperator\FleetOperatorServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase

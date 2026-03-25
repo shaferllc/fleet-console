@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Fleetphp\FleetOperator\Tests;
+namespace Dply\FleetOperator\Tests;
 
-use Fleetphp\FleetOperator\Http\Middleware\AuthenticateFleetOperator;
+use Dply\FleetOperator\Http\Middleware\AuthenticateFleetOperator;
 use Illuminate\Http\Request;
 
 final class AuthenticateFleetOperatorTest extends TestCase

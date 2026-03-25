@@ -75,6 +75,7 @@ GitHub Actions create a **GitHub Release** when you publish a semver tag or run 
 | Component | Tag format | Workflow |
 |-----------|------------|----------|
 | **Fleet Console** (this app) | `v1.2.3` | [Release Fleet Console](.github/workflows/release-console.yml) |
+| **`fleet-operator/`** (embedded package) | auto `v…` patch on **shaferllc/fleet-operator** | [Tag fleet-operator](.github/workflows/tag-fleet-operator.yml) — runs on push to `master` when `fleet-operator/**` changes |
 
 ```bash
 git tag -a v1.2.3 -m "Release v1.2.3"
@@ -88,6 +89,8 @@ git push origin v1.2.3
 The package lives in **[github.com/shaferllc/fleet-operator](https://github.com/shaferllc/fleet-operator)**. Release it there with tags **`v1.2.3`** (not `fleet-operator/v…`). [Packagist](https://packagist.org) (if the package is linked) updates from that repository.
 
 If you still maintain an embedded **`fleet-operator/`** copy inside this monorepo and want a release from here, you can use tag **`fleet-operator/v1.2.3`** and [Release fleet-operator (package)](.github/workflows/release-fleet-operator.yml) — that is optional; prefer tagging on **shaferllc/fleet-operator** for the canonical history and Packagist integration.
+
+**Automated package tags:** When `fleet-operator/**` changes on **`master`**, [Tag fleet-operator](.github/workflows/tag-fleet-operator.yml) runs `git subtree push` to **shaferllc/fleet-operator** `main`, then pushes the next **patch** tag (`v1.2.3` → `v1.2.4`). Add this repository secret: **`FLEET_OPERATOR_PACKAGE_TOKEN`** — a PAT with push access to **shaferllc/fleet-operator**. Use **Actions → Tag fleet-operator** to run manually. For **minor/major** bumps, create the tag on the package repo yourself (or delete/adjust remote tags before re-running).
 
 ## License
 

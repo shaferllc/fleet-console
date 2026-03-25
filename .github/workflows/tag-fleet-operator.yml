@@ -1,0 +1,88 @@
+# When embedded fleet-operator/ changes on master, sync github.com/shaferllc/fleet-operator
+# main (git subtree push) and push the next patch semver tag. The package repo's Release
+# workflow runs on tag v*.*.* and publishes the zip asset.
+#
+# Repository secret (this monorepo): FLEET_OPERATOR_PACKAGE_TOKEN
+# Fine-grained PAT: Contents Read+Write on shaferllc/fleet-operator. Classic: repo scope.
+
+name: Tag fleet-operator (sync + semver)
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'fleet-operator/**'
+  workflow_dispatch:
+
+concurrency:
+  group: tag-fleet-operator-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  sync-and-tag:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require package push token
+        env:
+          TOKEN: ${{ secrets.FLEET_OPERATOR_PACKAGE_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TOKEN}" ]; then
+            echo "::error::Set repository secret FLEET_OPERATOR_PACKAGE_TOKEN (PAT with push access to shaferllc/fleet-operator)."
+            exit 1
+          fi
+
+      - name: Configure package remote
+        env:
+          TOKEN: ${{ secrets.FLEET_OPERATOR_PACKAGE_TOKEN }}
+        run: |
+          set -euo pipefail
+          git remote add fleet-operator-release "https://x-access-token:${TOKEN}@github.com/shaferllc/fleet-operator.git"
+
+      - name: Push subtree to package main
+        run: |
+          set -euo pipefail
+          git subtree push --prefix=fleet-operator fleet-operator-release main
+
+      - name: Resolve next patch tag and push
+        env:
+          TOKEN: ${{ secrets.FLEET_OPERATOR_PACKAGE_TOKEN }}
+        run: |
+          set -euo pipefail
+          git fetch fleet-operator-release main
+          MAIN_SHA="$(git rev-parse FETCH_HEAD)"
+
+          # Ignore peeled tag lines (^{}) from ls-remote
+          LATEST="$(
+            git ls-remote --tags fleet-operator-release |
+              awk '$2 !~ /\^\{\}$/ { gsub(/^refs\/tags\//, "", $2); print $2 }' |
+              grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' |
+              sort -V |
+              tail -1
+          )"
+
+          if [ -z "${LATEST}" ]; then
+            NEXT="v1.0.0"
+          elif [[ "${LATEST}" =~ ^v([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+            M="${BASH_REMATCH[1]}"
+            N="${BASH_REMATCH[2]}"
+            P="${BASH_REMATCH[3]}"
+            NEXT="v${M}.${N}.$((P + 1))"
+          else
+            echo "::error::Latest tag ${LATEST} is not vMAJOR.MINOR.PATCH; fix tags on the package repo."
+            exit 1
+          fi
+
+          TITLE="dply/fleet-operator ${NEXT} (from fleet-console ${GITHUB_SHA:0:7})"
+          git -c user.email="github-actions[bot]@users.noreply.github.com" -c user.name="github-actions[bot]" tag -a "${NEXT}" -m "${TITLE}" "${MAIN_SHA}"
+          git push fleet-operator-release "refs/tags/${NEXT}"
+
+          echo "Pushed ${NEXT} -> ${MAIN_SHA}"

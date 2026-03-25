@@ -33,6 +33,11 @@
                     Open site<span class="text-cyan-400/70" aria-hidden="true">↗</span>
                 </a>
             @endif
+            @if ($stagingSiteUrl !== '')
+                <a href="{{ $stagingSiteUrl }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-xl bg-amber-500/10 px-4 py-2.5 text-sm font-semibold text-amber-100 ring-1 ring-amber-500/30 transition hover:bg-amber-500/15 hover:text-white" aria-label="Open {{ $target['name'] }} staging in a new tab">
+                    Open staging<span class="text-amber-400/70" aria-hidden="true">↗</span>
+                </a>
+            @endif
         </div>
         <div class="fc-glass mt-6 rounded-xl p-4">
             <p class="text-[10px] font-semibold uppercase tracking-wider text-zinc-500">Operator endpoint</p>

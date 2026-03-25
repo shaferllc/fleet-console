@@ -30,8 +30,30 @@ class FleetTargetsApiTest extends TestCase
             ->assertJsonCount(1, 'targets')
             ->assertJsonPath('targets.0.key', 'alpha')
             ->assertJsonPath('targets.0.name', 'Alpha')
+            ->assertJsonPath('targets.0.staging_site_url', null)
+            ->assertJsonPath('targets.0.urls.staging_site', null)
             ->assertJsonPath('targets.0.urls.operator_summary', 'https://alpha.test/api/operator/summary')
             ->assertJsonMissingPath('targets.0.operator_token');
+    }
+
+    public function test_index_includes_staging_site_when_configured(): void
+    {
+        config([
+            'fleet_console.api_token' => 'tok',
+            'fleet_console.targets' => [
+                [
+                    'key' => 'alpha',
+                    'name' => 'Alpha',
+                    'base_url' => 'https://alpha.test',
+                    'staging_site_url' => 'https://staging.alpha.test',
+                ],
+            ],
+        ]);
+
+        $this->getJson('/api/fleet/targets', ['Authorization' => 'Bearer tok'])
+            ->assertOk()
+            ->assertJsonPath('targets.0.staging_site_url', 'https://staging.alpha.test')
+            ->assertJsonPath('targets.0.urls.staging_site', 'https://staging.alpha.test');
     }
 
     public function test_show_returns_same_shape_as_poll_detail_for_known_target(): void

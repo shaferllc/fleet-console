@@ -25,6 +25,9 @@ class ProjectReadmeController extends Controller
         $rawSite = $target['site_url'] ?? null;
         $siteUrl = $baseUrl !== '' ? rtrim((is_string($rawSite) && $rawSite !== '') ? $rawSite : $baseUrl, '/') : '';
 
+        $rawStaging = $target['staging_site_url'] ?? null;
+        $stagingSiteUrl = (is_string($rawStaging) && $rawStaging !== '') ? rtrim($rawStaging, '/') : '';
+
         $operatorPrefix = (string) ($target['operator_path_prefix'] ?? '/api/operator');
         $operatorPrefix = '/'.ltrim(rtrim($operatorPrefix, '/'), '/');
         $url = $baseUrl.$operatorPrefix.'/readme';
@@ -73,6 +76,7 @@ class ProjectReadmeController extends Controller
             'target' => $target,
             'description' => $description,
             'siteUrl' => $siteUrl,
+            'stagingSiteUrl' => $stagingSiteUrl,
             'readmeUrl' => $url,
             'html' => $html,
             'rawFallback' => $raw === '' && $error === null ? 'Empty README response.' : null,

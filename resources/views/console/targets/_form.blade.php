@@ -65,6 +65,18 @@
     </div>
 
     <div>
+        <label for="staging_site_url" class="block text-sm font-medium text-zinc-300">Staging site URL</label>
+        <input type="url" name="staging_site_url" id="staging_site_url"
+            value="{{ old('staging_site_url', $target?->staging_site_url) }}"
+            class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
+            placeholder="https://staging.example.com">
+        <p class="mt-1.5 text-xs text-zinc-500"><span class="text-zinc-400">Where:</span> optional link to staging / preview; shown on the card and README next to production.</p>
+        @error('staging_site_url')
+            <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+        @enderror
+    </div>
+
+    <div>
         <label for="operator_path_prefix" class="block text-sm font-medium text-zinc-300">Operator path prefix</label>
         <input type="text" name="operator_path_prefix" id="operator_path_prefix"
             value="{{ old('operator_path_prefix', $target?->operator_path_prefix ?? '/api/operator') }}"

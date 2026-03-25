@@ -13,6 +13,7 @@ class FleetTarget extends Model
         'description',
         'base_url',
         'site_url',
+        'staging_site_url',
         'operator_path_prefix',
         'operator_token',
         'sort_order',
@@ -55,6 +56,11 @@ class FleetTarget extends Model
         $site = $this->site_url;
         if (is_string($site) && $site !== '') {
             $row['site_url'] = rtrim($site, '/');
+        }
+
+        $staging = $this->staging_site_url;
+        if (is_string($staging) && $staging !== '') {
+            $row['staging_site_url'] = rtrim($staging, '/');
         }
 
         $tok = $this->operator_token;

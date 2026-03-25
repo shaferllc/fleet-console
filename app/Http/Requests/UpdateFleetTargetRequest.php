@@ -27,6 +27,7 @@ class UpdateFleetTargetRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:20000'],
             'base_url' => ['required', 'string', 'max:512'],
             'site_url' => ['nullable', 'string', 'max:512'],
+            'staging_site_url' => ['nullable', 'string', 'max:512'],
             'operator_path_prefix' => ['nullable', 'string', 'max:128'],
             'operator_token' => [
                 'nullable',

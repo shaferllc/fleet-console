@@ -38,6 +38,7 @@ class FleetTargetsAdminTest extends TestCase
                 'description' => 'Test',
                 'base_url' => 'https://alpha.test',
                 'site_url' => '',
+                'staging_site_url' => 'https://staging.alpha.test',
                 'operator_path_prefix' => '/api/operator',
                 'operator_token' => 'alpha-op-token-32chars-min',
                 'sort_order' => 0,
@@ -45,7 +46,11 @@ class FleetTargetsAdminTest extends TestCase
             ])
             ->assertRedirect(route('console.targets.index'));
 
-        $this->assertDatabaseHas('fleet_targets', ['key' => 'alpha', 'name' => 'Alpha']);
+        $this->assertDatabaseHas('fleet_targets', [
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'staging_site_url' => 'https://staging.alpha.test',
+        ]);
 
         $this->actingAsConsole()
             ->get(route('console.dashboard'))

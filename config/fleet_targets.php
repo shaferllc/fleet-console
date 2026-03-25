@@ -6,6 +6,7 @@
  * Base URLs use FLEET_CONSOLE_TARGET_URL_TEMPLATE ({key} is substituted per row).
  * Optional `operator_path_prefix`: default `/api/operator` (some stacks use e.g. `/api/v1/operator`).
  * Optional `site_url`: override the “Open site” link (defaults to `base_url`).
+ * Optional `staging_site_url`: link for staging / preview (no default).
  */
 return [
     [

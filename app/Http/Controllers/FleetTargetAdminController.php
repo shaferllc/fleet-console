@@ -120,6 +120,7 @@ class FleetTargetAdminController extends Controller
                 'description' => $row['description'] !== '' ? $row['description'] : null,
                 'base_url' => $row['base_url'],
                 'site_url' => $row['site_url'],
+                'staging_site_url' => $row['staging_site_url'] ?? null,
                 'operator_path_prefix' => $row['operator_path_prefix'],
                 'operator_token' => null,
                 'sort_order' => $i * 10,

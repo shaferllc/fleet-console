@@ -33,6 +33,12 @@
                     </a>
                     <span class="mx-2 text-zinc-600 select-none sm:mx-3" aria-hidden="true">·</span>
                 @endif
+                @if (! empty($row['staging_site_url']))
+                    <a href="{{ $row['staging_site_url'] }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 rounded-lg bg-amber-500/10 px-3 py-1.5 font-medium text-amber-200 ring-1 ring-amber-500/25 transition hover:bg-amber-500/15 hover:text-amber-100" aria-label="Open {{ $row['name'] }} staging in a new tab">
+                        Open staging<span class="text-amber-500/75" aria-hidden="true">↗</span>
+                    </a>
+                    <span class="mx-2 text-zinc-600 select-none sm:mx-3" aria-hidden="true">·</span>
+                @endif
                 <a href="{{ route('console.project.readme', ['key' => $row['key']]) }}" class="inline-flex items-center rounded-lg px-3 py-1.5 font-medium text-zinc-400 ring-1 ring-zinc-700/80 transition hover:bg-zinc-800/50 hover:text-zinc-100">
                     README
                 </a>

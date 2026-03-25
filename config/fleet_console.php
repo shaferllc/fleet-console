@@ -9,7 +9,7 @@ $defaultTargets = array_map(static function (array $row) use ($template): array 
         'name' => $row['name'],
         'base_url' => str_replace('{key}', $row['key'], $template),
     ];
-    foreach (['description', 'operator_path_prefix', 'operator_token', 'site_url'] as $optional) {
+    foreach (['description', 'operator_path_prefix', 'operator_token', 'site_url', 'staging_site_url'] as $optional) {
         if (array_key_exists($optional, $row)) {
             $out[$optional] = $row[$optional];
         }

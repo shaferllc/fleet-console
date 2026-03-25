@@ -65,6 +65,9 @@ class FleetTargetPoller
         $rawSite = $target['site_url'] ?? null;
         $siteUrl = $baseUrl !== '' ? rtrim((is_string($rawSite) && $rawSite !== '') ? $rawSite : $baseUrl, '/') : '';
 
+        $rawStaging = $target['staging_site_url'] ?? null;
+        $stagingSiteUrl = (is_string($rawStaging) && $rawStaging !== '') ? rtrim($rawStaging, '/') : '';
+
         $summaryUrl = $baseUrl !== '' ? $baseUrl.$operatorPrefix.'/summary' : '';
         $readmeUrl = $baseUrl !== '' ? $baseUrl.$operatorPrefix.'/readme' : '';
 
@@ -74,6 +77,7 @@ class FleetTargetPoller
             'description' => $description,
             'base_url' => $baseUrl,
             'site_url' => $siteUrl,
+            'staging_site_url' => $stagingSiteUrl,
             'operator_summary_url' => $summaryUrl,
             'operator_readme_url' => $readmeUrl,
         ];

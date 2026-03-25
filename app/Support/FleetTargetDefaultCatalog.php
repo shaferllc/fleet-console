@@ -16,7 +16,7 @@ class FleetTargetDefaultCatalog
     }
 
     /**
-     * @return list<array{key: string, name: string, description: string, base_url: string, site_url: string|null, operator_path_prefix: string}>
+     * @return list<array{key: string, name: string, description: string, base_url: string, site_url: string|null, staging_site_url: string|null, operator_path_prefix: string}>
      */
     public static function catalogRows(): array
     {
@@ -57,12 +57,18 @@ class FleetTargetDefaultCatalog
                 $siteUrl = rtrim($row['site_url'], '/');
             }
 
+            $stagingSiteUrl = null;
+            if (isset($row['staging_site_url']) && is_string($row['staging_site_url']) && $row['staging_site_url'] !== '') {
+                $stagingSiteUrl = rtrim($row['staging_site_url'], '/');
+            }
+
             $out[] = [
                 'key' => $key,
                 'name' => $name,
                 'description' => $desc,
                 'base_url' => self::templateBaseUrlForKey($key),
                 'site_url' => $siteUrl,
+                'staging_site_url' => $stagingSiteUrl,
                 'operator_path_prefix' => $prefix,
             ];
         }

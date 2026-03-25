@@ -1,5 +1,9 @@
 <?php
 
+use App\Http\Middleware\EnsureFleetApiToken;
+use App\Http\Middleware\EnsureFleetConsoleAuthenticated;
+use App\Http\Middleware\EnsureFleetTrustedIp;
+use App\Http\Middleware\SyncFleetTargetsFromDatabase;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -26,10 +30,16 @@ return Application::configure(basePath: dirname(__DIR__))
         });
     })
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(append: [
+            SyncFleetTargetsFromDatabase::class,
+        ]);
+        $middleware->api(append: [
+            SyncFleetTargetsFromDatabase::class,
+        ]);
         $middleware->alias([
-            'fleet.console' => \App\Http\Middleware\EnsureFleetConsoleAuthenticated::class,
-            'fleet.api' => \App\Http\Middleware\EnsureFleetApiToken::class,
-            'fleet.trusted_ip' => \App\Http\Middleware\EnsureFleetTrustedIp::class,
+            'fleet.console' => EnsureFleetConsoleAuthenticated::class,
+            'fleet.api' => EnsureFleetApiToken::class,
+            'fleet.trusted_ip' => EnsureFleetTrustedIp::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -14,7 +14,7 @@ class EnsureFleetApiToken
         if (! is_string($expected) || $expected === '') {
             return response()->json([
                 'message' => 'Fleet read API is not configured (set FLEET_CONSOLE_API_TOKEN).',
-            ], 503);
+            ], 404);
         }
 
         $provided = $request->bearerToken();

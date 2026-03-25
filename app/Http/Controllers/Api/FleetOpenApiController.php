@@ -24,7 +24,10 @@ class FleetOpenApiController extends Controller
                     'get' => [
                         'summary' => 'Configured targets (no secrets)',
                         'security' => [['bearerAuth' => []], ['fleetHeader' => []]],
-                        'responses' => ['200' => ['description' => 'OK']],
+                        'responses' => [
+                            '200' => ['description' => 'OK'],
+                            '404' => ['description' => 'Read API disabled (FLEET_CONSOLE_API_TOKEN unset)'],
+                        ],
                     ],
                 ],
                 '/api/fleet/targets/{key}' => [
@@ -45,7 +48,10 @@ class FleetOpenApiController extends Controller
                             ['name' => 'keys', 'in' => 'query', 'schema' => ['type' => 'string'], 'description' => 'Comma-separated target keys.'],
                         ],
                         'security' => [['bearerAuth' => []], ['fleetHeader' => []]],
-                        'responses' => ['200' => ['description' => 'OK']],
+                        'responses' => [
+                            '200' => ['description' => 'OK'],
+                            '404' => ['description' => 'Read API disabled (FLEET_CONSOLE_API_TOKEN unset)'],
+                        ],
                     ],
                 ],
                 '/api/fleet/alerts' => [
@@ -74,7 +80,10 @@ class FleetOpenApiController extends Controller
                         'parameters' => [
                             ['name' => 'token', 'in' => 'query', 'schema' => ['type' => 'string']],
                         ],
-                        'responses' => ['200' => ['description' => 'ok'], '403' => ['description' => 'when token required'], '503' => ['description' => 'DB down']],
+                        'responses' => [
+                            '200' => ['description' => 'ok or degraded (database false)'],
+                            '403' => ['description' => 'when token required'],
+                        ],
                     ],
                 ],
             ],

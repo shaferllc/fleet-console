@@ -32,7 +32,7 @@ class FleetHealthController extends Controller
             return response()->json([
                 'status' => 'degraded',
                 'database' => false,
-            ], 503);
+            ]);
         }
     }
 }

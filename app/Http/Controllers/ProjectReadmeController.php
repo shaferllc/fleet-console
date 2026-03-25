@@ -16,10 +16,9 @@ class ProjectReadmeController extends Controller
             abort(404);
         }
 
-        $token = config('fleet_console.operator_token');
-        if (! is_string($token) || $token === '') {
-            abort(503, 'Fleet operator token is not configured.');
-        }
+        $defaultToken = config('fleet_console.operator_token');
+        $token = $target['operator_token'] ?? $defaultToken;
+        $tokenMissing = ! is_string($token) || $token === '';
 
         $baseUrl = rtrim((string) ($target['base_url'] ?? ''), '/');
         $rawDesc = $target['description'] ?? null;
@@ -35,24 +34,28 @@ class ProjectReadmeController extends Controller
         $html = '';
         $raw = '';
 
-        try {
-            $response = Http::timeout(20)
-                ->withOptions(['verify' => (bool) config('fleet_console.http_verify', true)])
-                ->withToken($token)
-                ->acceptJson()
-                ->get($url);
+        if ($tokenMissing) {
+            $error = 'Fleet operator token is not configured (set FLEET_OPERATOR_TOKEN or a per-target token).';
+        } else {
+            try {
+                $response = Http::timeout(20)
+                    ->withOptions(['verify' => (bool) config('fleet_console.http_verify', true)])
+                    ->withToken($token)
+                    ->acceptJson()
+                    ->get($url);
 
-            if ($response->successful()) {
-                $data = $response->json();
-                $raw = is_string($data['content'] ?? null) ? $data['content'] : '';
-                $html = $raw !== '' ? Str::markdown($raw, [
-                    'allow_unsafe_links' => false,
-                ]) : '';
-            } else {
-                $error = 'HTTP '.$response->status().' — '.Str::limit($response->body(), 500);
+                if ($response->successful()) {
+                    $data = $response->json();
+                    $raw = is_string($data['content'] ?? null) ? $data['content'] : '';
+                    $html = $raw !== '' ? Str::markdown($raw, [
+                        'allow_unsafe_links' => false,
+                    ]) : '';
+                } else {
+                    $error = 'HTTP '.$response->status().' — '.Str::limit($response->body(), 500);
+                }
+            } catch (\Throwable $e) {
+                $error = $e->getMessage();
             }
-        } catch (\Throwable $e) {
-            $error = $e->getMessage();
         }
 
         return view('console.readme', [

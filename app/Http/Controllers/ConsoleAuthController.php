@@ -26,7 +26,9 @@ class ConsoleAuthController extends Controller
 
         $expected = config('fleet_console.password');
         if (! is_string($expected) || $expected === '') {
-            abort(503, 'Fleet console is not configured.');
+            throw ValidationException::withMessages([
+                'password' => __('Fleet console login is not configured (set FLEET_CONSOLE_PASSWORD).'),
+            ]);
         }
 
         if (! hash_equals(hash('sha256', $expected), hash('sha256', $request->input('password')))) {

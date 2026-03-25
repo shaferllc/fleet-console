@@ -10,12 +10,12 @@ class FleetApiSummaryTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_summary_returns_503_when_api_token_not_configured(): void
+    public function test_summary_returns_404_when_api_token_not_configured(): void
     {
         config(['fleet_console.api_token' => '']);
 
         $this->getJson('/api/fleet/summary', ['Authorization' => 'Bearer anything'])
-            ->assertStatus(503)
+            ->assertNotFound()
             ->assertJsonFragment(['message' => 'Fleet read API is not configured (set FLEET_CONSOLE_API_TOKEN).']);
     }
 

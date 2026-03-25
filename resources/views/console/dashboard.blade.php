@@ -3,6 +3,12 @@
 @section('title', 'Dashboard')
 
 @section('topbar_actions')
+    <a
+        href="{{ route('console.targets.index') }}"
+        class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-cyan-500/35 hover:bg-zinc-800/70 hover:text-cyan-100"
+    >
+        Services
+    </a>
     <button
         type="button"
         id="fleet-refresh-all"
@@ -52,11 +58,11 @@
     @if (count($results) === 0)
         <div class="fc-glass mt-10 rounded-2xl border-amber-500/20 p-6 ring-1 ring-amber-500/10">
             <p class="text-sm leading-relaxed text-amber-100/90">
-                No targets configured. Add apps in
-                <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">config/fleet_targets.php</code>
-                or set a non-empty
+                No targets configured. Open
+                <a href="{{ route('console.targets.index') }}" class="font-medium text-cyan-300 underline decoration-cyan-500/40 underline-offset-2 hover:text-cyan-200">Services</a>
+                to add apps or import the built-in catalog. You can still use
                 <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">FLEET_CONSOLE_TARGETS</code>
-                JSON in <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">.env</code>.
+                in <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">.env</code> when the database list is empty.
             </p>
         </div>
     @else

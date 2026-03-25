@@ -17,6 +17,7 @@ Route::middleware('fleet.trusted_ip')->group(function (): void {
         Route::get('/targets', [FleetTargetAdminController::class, 'index'])->name('console.targets.index');
         Route::get('/targets/create', [FleetTargetAdminController::class, 'create'])->name('console.targets.create');
         Route::post('/targets', [FleetTargetAdminController::class, 'store'])->name('console.targets.store');
+        Route::post('/targets/reorder', [FleetTargetAdminController::class, 'reorder'])->name('console.targets.reorder');
         Route::post('/targets/import-defaults', [FleetTargetAdminController::class, 'importDefaults'])->name('console.targets.import');
         Route::get('/targets/{fleet_target}/edit', [FleetTargetAdminController::class, 'edit'])->name('console.targets.edit');
         Route::put('/targets/{fleet_target}', [FleetTargetAdminController::class, 'update'])->name('console.targets.update');

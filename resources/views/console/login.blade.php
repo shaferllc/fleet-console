@@ -4,16 +4,7 @@
 
 @section('simple_header')
     <div class="px-4 pt-16 pb-8 text-center sm:pt-20">
-        <div class="fc-logo-ring mx-auto flex h-16 w-16 items-center justify-center rounded-2xl p-[2px] shadow-xl shadow-cyan-500/15">
-            <span class="flex h-full w-full items-center justify-center rounded-[14px] bg-zinc-950">
-                <svg class="h-8 w-8 text-cyan-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
-                    <path d="M4 14.5A2.5 2.5 0 0 1 6.5 12H8a6 6 0 0 1 6 6v1a2 2 0 0 1-2 2h-1.5" stroke-linecap="round"/>
-                    <path d="M8 5.5A2.5 2.5 0 0 0 5.5 8v8A2.5 2.5 0 0 0 8 18.5" stroke-linecap="round"/>
-                    <path d="M20 9.5A2.5 2.5 0 0 0 17.5 12H16a6 6 0 0 0-6-6V5a2 2 0 0 1 2-2h1.5" stroke-linecap="round"/>
-                    <path d="M16 18.5a2.5 2.5 0 0 0 2.5-2.5V8A2.5 2.5 0 0 0 16 5.5" stroke-linecap="round"/>
-                </svg>
-            </span>
-        </div>
+        @include('partials.fleet-logo-mark', ['variant' => 'login'])
         <h1 class="fc-heading mt-8 text-3xl font-bold tracking-tight text-white sm:text-4xl">Fleet console</h1>
         <p class="mx-auto mt-3 max-w-sm text-sm leading-relaxed text-zinc-400">
             Sign in to poll your apps’ operator APIs and read project READMEs in one place.

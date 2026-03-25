@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FleetAlertEvent;
 use App\Services\FleetPollHistory;
 use App\Services\FleetTargetPoller;
+use App\Support\FleetDashboardTargetMeta;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -14,6 +15,7 @@ class DashboardController extends Controller
     {
         $results = $poller->pollAll();
         $results = $history->attachLastPollAtToRows($results);
+        $results = FleetDashboardTargetMeta::attach($results);
         $total = count($results);
         $okCount = $total ? collect($results)->where('ok', true)->count() : 0;
 

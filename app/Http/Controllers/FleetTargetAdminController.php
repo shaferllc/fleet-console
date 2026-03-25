@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ReorderFleetTargetsRequest;
 use App\Http\Requests\StoreFleetTargetRequest;
 use App\Http\Requests\UpdateFleetTargetRequest;
 use App\Models\FleetTarget;
 use App\Support\FleetTargetDefaultCatalog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -81,6 +83,19 @@ class FleetTargetAdminController extends Controller
         return redirect()
             ->route('console.targets.index')
             ->with('status', 'Service removed.');
+    }
+
+    public function reorder(ReorderFleetTargetsRequest $request): JsonResponse
+    {
+        $order = $request->validated('order');
+
+        foreach ($order as $i => $key) {
+            FleetTarget::query()->where('key', $key)->update([
+                'sort_order' => $i * 10,
+            ]);
+        }
+
+        return response()->json(['ok' => true]);
     }
 
     public function importDefaults(): RedirectResponse

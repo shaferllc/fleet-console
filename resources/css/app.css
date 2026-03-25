@@ -132,3 +132,13 @@
     font-size: 0.6875rem;
     line-height: 1.4;
 }
+
+.fleet-sortable-ghost {
+    opacity: 0.45;
+}
+
+.fleet-sortable-chosen {
+    box-shadow:
+        0 0 0 2px oklch(0.72 0.14 195 / 0.45),
+        0 24px 48px -24px oklch(0 0 0 / 0.65);
+}

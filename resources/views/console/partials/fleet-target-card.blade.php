@@ -1,7 +1,22 @@
-<li data-fleet-card="{{ $row['key'] }}" class="fc-card group relative overflow-hidden rounded-2xl p-6 sm:p-7">
+<li
+    data-fleet-card="{{ $row['key'] }}"
+    data-fleet-card-status="{{ ! empty($row['ok']) ? 'ok' : 'err' }}"
+    data-fleet-reorderable="{{ isset($row['fleet_target_id']) ? '1' : '0' }}"
+    class="fc-card group relative overflow-hidden rounded-2xl p-6 sm:p-7"
+>
     <div class="pointer-events-none absolute -right-16 -top-16 h-40 w-40 rounded-full bg-cyan-500/5 blur-3xl transition-opacity group-hover:opacity-100" aria-hidden="true"></div>
 
     <div class="relative flex flex-wrap items-start justify-between gap-4">
+        @if (isset($row['fleet_target_id']))
+            <button
+                type="button"
+                data-fleet-drag-handle
+                class="touch-none mt-0.5 shrink-0 cursor-grab rounded-lg border border-zinc-700/60 bg-zinc-900/40 px-1.5 py-2 text-zinc-500 outline-none active:cursor-grabbing hover:border-zinc-500 hover:text-zinc-300 focus-visible:ring-2 focus-visible:ring-cyan-500/40"
+                aria-label="Drag to reorder {{ $row['name'] }}"
+            >
+                <span class="block font-mono text-sm leading-none tracking-tighter text-zinc-400" aria-hidden="true">⋮⋮</span>
+            </button>
+        @endif
         <div class="min-w-0 flex-1">
             <div class="flex flex-wrap items-baseline gap-y-1">
                 <a href="{{ route('console.project.readme', ['key' => $row['key']]) }}" class="fc-heading text-xl font-semibold text-white transition hover:text-cyan-200">{{ $row['name'] }}</a>
@@ -21,6 +36,12 @@
                 <a href="{{ route('console.project.readme', ['key' => $row['key']]) }}" class="inline-flex items-center rounded-lg px-3 py-1.5 font-medium text-zinc-400 ring-1 ring-zinc-700/80 transition hover:bg-zinc-800/50 hover:text-zinc-100">
                     README
                 </a>
+                @if (! empty($row['edit_url']))
+                    <span class="mx-2 text-zinc-600 select-none sm:mx-3" aria-hidden="true">·</span>
+                    <a href="{{ $row['edit_url'] }}" class="inline-flex items-center rounded-lg px-3 py-1.5 font-medium text-cyan-400/90 ring-1 ring-cyan-500/25 transition hover:bg-cyan-950/40 hover:text-cyan-200">
+                        Edit service
+                    </a>
+                @endif
             </div>
         </div>
         <div class="flex shrink-0 flex-col items-end gap-2">

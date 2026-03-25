@@ -1,4 +1,5 @@
 import './bootstrap';
+import Sortable from 'sortablejs';
 
 /** @returns {string} 64 hex chars (32 bytes) */
 function fleetSecureOperatorToken() {
@@ -63,6 +64,109 @@ function fleetHeaders() {
         'X-Requested-With': 'XMLHttpRequest',
         'X-CSRF-TOKEN': t?.getAttribute('content') ?? '',
     };
+}
+
+let fleetCardsSortable = null;
+
+/** @type {'all' | 'ok' | 'err'} */
+let fleetCardsFilterMode = 'all';
+
+function fleetStyleFilterButtons(mode) {
+    const toolbar = document.querySelector('[data-fleet-cards-toolbar]');
+    if (!toolbar) {
+        return;
+    }
+    toolbar.querySelectorAll('[data-fleet-filter]').forEach((btn) => {
+        const m = btn.getAttribute('data-fleet-filter');
+        const on = m === mode;
+        btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        const base = 'fleet-card-filter-btn rounded-lg px-3 py-2 text-xs font-medium transition';
+        if (on) {
+            if (m === 'all') {
+                btn.className = `${base} border border-cyan-500/40 bg-cyan-950/35 text-cyan-100 ring-2 ring-cyan-500/35 hover:border-cyan-400/50 hover:bg-cyan-900/30`;
+            } else if (m === 'ok') {
+                btn.className = `${base} border border-emerald-500/40 bg-emerald-950/30 text-emerald-100 ring-2 ring-emerald-500/35 hover:border-emerald-400/45 hover:bg-emerald-900/25`;
+            } else {
+                btn.className = `${base} border border-red-500/40 bg-red-950/25 text-red-100 ring-2 ring-red-500/40 hover:border-red-400/45 hover:bg-red-900/20`;
+            }
+        } else {
+            btn.className = `${base} border border-zinc-600/50 bg-zinc-900/40 text-zinc-300 hover:border-zinc-500 hover:bg-zinc-800/60 hover:text-white`;
+        }
+    });
+}
+
+function fleetApplyCardsFilter(mode) {
+    if (mode !== 'all' && mode !== 'ok' && mode !== 'err') {
+        return;
+    }
+    fleetCardsFilterMode = mode;
+    const grid = document.getElementById('fleet-cards-grid');
+    if (grid) {
+        grid.querySelectorAll(':scope > [data-fleet-card]').forEach((li) => {
+            const st = li.getAttribute('data-fleet-card-status');
+            const show =
+                mode === 'all' || (mode === 'ok' && st === 'ok') || (mode === 'err' && st === 'err');
+            li.classList.toggle('hidden', !show);
+        });
+    }
+    fleetStyleFilterButtons(mode);
+}
+
+function fleetDestroyCardsSortable() {
+    if (fleetCardsSortable) {
+        fleetCardsSortable.destroy();
+        fleetCardsSortable = null;
+    }
+}
+
+async function fleetPersistCardOrder() {
+    const grid = document.getElementById('fleet-cards-grid');
+    if (!grid) {
+        return;
+    }
+    const keys = [...grid.querySelectorAll(':scope > [data-fleet-card]')]
+        .map((li) => li.getAttribute('data-fleet-card'))
+        .filter((k) => typeof k === 'string' && k !== '');
+    if (keys.length === 0) {
+        return;
+    }
+    try {
+        const r = await fetch('/targets/reorder', {
+            method: 'POST',
+            headers: {
+                ...fleetHeaders(),
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ order: keys }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (!r.ok) {
+            throw new Error(typeof data.message === 'string' ? data.message : 'Could not save order');
+        }
+    } catch (e) {
+        alert(e instanceof Error ? e.message : 'Could not save order');
+    }
+}
+
+function fleetInitCardsSortable() {
+    fleetDestroyCardsSortable();
+    const grid = document.getElementById('fleet-cards-grid');
+    if (!grid || !grid.querySelector('[data-fleet-reorderable="1"]')) {
+        return;
+    }
+    fleetCardsSortable = Sortable.create(grid, {
+        animation: 160,
+        handle: '[data-fleet-drag-handle]',
+        draggable: '[data-fleet-card]',
+        ghostClass: 'fleet-sortable-ghost',
+        chosenClass: 'fleet-sortable-chosen',
+        onEnd: fleetPersistCardOrder,
+    });
+}
+
+function fleetSetupDashboardCards() {
+    fleetInitCardsSortable();
+    fleetApplyCardsFilter(fleetCardsFilterMode);
 }
 
 function fleetSparklineStrip(bits) {
@@ -413,10 +517,12 @@ document.getElementById('fleet-refresh-all')?.addEventListener('click', async fu
         if (cmp && data.html_compare) {
             cmp.outerHTML = data.html_compare;
         }
-        const grid = document.getElementById('fleet-cards-grid');
-        if (grid && data.html_grid) {
-            grid.outerHTML = data.html_grid;
+        fleetDestroyCardsSortable();
+        const section = document.getElementById('fleet-cards-section');
+        if (section && data.html_cards_section) {
+            section.outerHTML = data.html_cards_section;
         }
+        fleetSetupDashboardCards();
     } catch (e) {
         alert(e instanceof Error ? e.message : 'Refresh failed');
     } finally {
@@ -447,6 +553,7 @@ document.addEventListener('click', async function (e) {
         if (li && data.html) {
             li.outerHTML = data.html;
         }
+        fleetApplyCardsFilter(fleetCardsFilterMode);
         const stats = document.getElementById('fleet-stats-strip');
         if (stats && data.html_stats) {
             stats.outerHTML = data.html_stats;
@@ -613,6 +720,21 @@ document.addEventListener('click', function (e) {
 document.addEventListener('DOMContentLoaded', function () {
     if (window.location.hash === '#fleet-cards-grid') {
         fleetFocusFleetCardsGrid();
+    }
+    if (document.getElementById('fleet-cards-section')) {
+        fleetSetupDashboardCards();
+    }
+});
+
+document.addEventListener('click', function (e) {
+    const btn = e.target.closest('[data-fleet-filter]');
+    if (!btn || !document.getElementById('fleet-cards-section')?.contains(btn)) {
+        return;
+    }
+    e.preventDefault();
+    const mode = btn.getAttribute('data-fleet-filter');
+    if (mode === 'all' || mode === 'ok' || mode === 'err') {
+        fleetApplyCardsFilter(mode);
     }
 });
 

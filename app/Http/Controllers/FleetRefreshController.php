@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FleetAlertEvent;
 use App\Services\FleetPollHistory;
 use App\Services\FleetTargetPoller;
+use App\Support\FleetDashboardTargetMeta;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -14,6 +15,7 @@ class FleetRefreshController extends Controller
     {
         $results = $poller->pollAll();
         $results = $history->attachLastPollAtToRows($results);
+        $results = FleetDashboardTargetMeta::attach($results);
         $total = count($results);
         $okCount = collect($results)->where('ok', true)->count();
         $vis = $history->fleetVisibilitySnapshot();
@@ -32,7 +34,7 @@ class FleetRefreshController extends Controller
                 ...$vis,
             ])->render(),
             'html_alerts' => $this->renderAlertTimelineHtml(),
-            'html_grid' => view('console.partials.fleet-cards-grid', [
+            'html_cards_section' => view('console.partials.fleet-cards-section', [
                 'results' => $results,
             ])->render(),
             'html_compare' => $total > 0
@@ -50,7 +52,7 @@ class FleetRefreshController extends Controller
             return response()->json(['message' => 'Unknown target.'], 404);
         }
 
-        $row = $history->attachLastPollAtToRows([$row])[0];
+        $row = FleetDashboardTargetMeta::attach($history->attachLastPollAtToRows([$row]))[0];
         $counts = $history->terminalStatusCounts();
         $vis = $history->fleetVisibilitySnapshot();
 

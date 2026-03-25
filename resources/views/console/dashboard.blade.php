@@ -70,6 +70,6 @@
             @include('console.partials.fleet-detail-modal')
         @endpush
         @include('console.partials.fleet-compare-section', ['rows' => $results])
-        @include('console.partials.fleet-cards-grid', ['results' => $results])
+        @include('console.partials.fleet-cards-section', ['results' => $results])
     @endif
 @endsection

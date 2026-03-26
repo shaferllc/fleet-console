@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dae0fe2afe9b2ef8a152590746ec83eb",
+    "content-hash": "2db609d397c42352895a897fc938d766",
     "packages": [
         {
             "name": "brick/math",
@@ -579,45 +579,6 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
-        },
-        {
-            "name": "fleet/idp-client",
-            "version": "0.4.0",
-            "dist": {
-                "type": "path",
-                "url": "../fleet-idp-client",
-                "reference": "77be5a4f9939c7e391baf5885a570ed5f15db9a2"
-            },
-            "require": {
-                "illuminate/console": "^12.0|^13.0",
-                "illuminate/contracts": "^12.0|^13.0",
-                "illuminate/database": "^12.0|^13.0",
-                "illuminate/http": "^12.0|^13.0",
-                "illuminate/session": "^12.0|^13.0",
-                "illuminate/support": "^12.0|^13.0",
-                "php": "^8.3"
-            },
-            "type": "library",
-            "extra": {
-                "laravel": {
-                    "providers": [
-                        "Fleet\\IdpClient\\FleetIdpServiceProvider"
-                    ]
-                }
-            },
-            "autoload": {
-                "psr-4": {
-                    "Fleet\\IdpClient\\": "src/"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "description": "Laravel client for Fleet central auth: Passport OAuth, optional password grant, Eloquent user sync.",
-            "transport-options": {
-                "symlink": true,
-                "relative": true
-            }
         },
         {
             "name": "fruitcake/php-cors",
@@ -3407,6 +3368,52 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.2"
             },
             "time": "2025-12-14T04:43:48+00:00"
+        },
+        {
+            "name": "shaferllc/fleet-idp-client",
+            "version": "0.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/shaferllc/fleet-idp-client.git",
+                "reference": "9cc17e1147d9a180efae891a1cc54919f0e45a0c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/shaferllc/fleet-idp-client/zipball/9cc17e1147d9a180efae891a1cc54919f0e45a0c",
+                "reference": "9cc17e1147d9a180efae891a1cc54919f0e45a0c",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^12.0|^13.0",
+                "illuminate/contracts": "^12.0|^13.0",
+                "illuminate/database": "^12.0|^13.0",
+                "illuminate/http": "^12.0|^13.0",
+                "illuminate/session": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fleet\\IdpClient\\FleetIdpServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fleet\\IdpClient\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel client for Fleet central auth: Passport OAuth, optional password grant, Eloquent user sync, fleet:idp:configure CLI.",
+            "support": {
+                "source": "https://github.com/shaferllc/fleet-idp-client/tree/v0.5.0",
+                "issues": "https://github.com/shaferllc/fleet-idp-client/issues"
+            },
+            "time": "2026-03-26T01:17:51+00:00"
         },
         {
             "name": "symfony/clock",

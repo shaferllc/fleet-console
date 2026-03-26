@@ -7,16 +7,8 @@
     "license": "MIT",
     "repositories": [
         {
-            "type": "composer",
-            "url": "https://packages.shafer.llc",
-            "canonical": false
-        },
-        {
-            "type": "path",
-            "url": "../fleet-idp-client",
-            "options": {
-                "symlink": true
-            }
+            "type": "vcs",
+            "url": "https://github.com/shaferllc/fleet-idp-client"
         },
         {
             "type": "path",
@@ -29,7 +21,7 @@
     "require": {
         "php": "^8.4",
         "dply/fleet-operator": "@dev",
-        "fleet/idp-client": "^0.4",
+        "shaferllc/fleet-idp-client": "^0.5",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },

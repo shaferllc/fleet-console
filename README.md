@@ -68,7 +68,7 @@ This keeps the OSS project small. A full user table and Laravel Breeze/Fortify w
 
 ### Optional: Fleet Auth (OAuth login)
 
-You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password via **`fleet/idp-client`** ([packages.shafer.llc/packages/fleet/idp-client](https://packages.shafer.llc/packages/fleet/idp-client)). The package registers **`GET /oauth/fleet-auth`** → IdP and **`GET /auth/callback`** (when `FLEET_IDP_REDIRECT_PATH=/auth/callback`) for the return URL; use **`FLEET_IDP_WEB_MODE=session`** and **`FLEET_IDP_WEB_MIDDLEWARE=web,fleet.trusted_ip`** so OAuth endpoints respect the same IP allowlist as `/login`. The login Blade template includes **`x-fleet-idp::oauth-button variant="console"`**.
+You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password via **`shaferllc/fleet-idp-client`** ([Packagist](https://packagist.org/packages/shaferllc/fleet-idp-client)). The package registers **`GET /oauth/fleet-auth`** → IdP and **`GET /auth/callback`** (when `FLEET_IDP_REDIRECT_PATH=/auth/callback`) for the return URL; use **`FLEET_IDP_WEB_MODE=session`** and **`FLEET_IDP_WEB_MIDDLEWARE=web,fleet.trusted_ip`** so OAuth endpoints respect the same IP allowlist as `/login`. The login Blade template includes **`x-fleet-idp::oauth-button variant="console"`**.
 
 Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/auth/callback`**, then set in `.env` (see `.env.example`):
 

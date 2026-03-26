@@ -68,7 +68,9 @@ This keeps the OSS project small. A full user table and Laravel Breeze/Fortify w
 
 ### Optional: Fleet Auth (OAuth login)
 
-You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password, using **[fleet/idp-client](https://github.com/shaferllc/fleet-idp-client)**. Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/auth/callback`**, then set in `.env` (see `.env.example`):
+You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password, using **`fleet/idp-client`** from **[packages.shafer.llc/packages/fleet/idp-client](https://packages.shafer.llc/packages/fleet/idp-client)** (Composer repository root: `https://packages.shafer.llc`). Implementation notes and how to wire **Blade views** live in the [package README](https://github.com/shaferllc/fleet-idp-client/blob/main/README.md) (“Views and UI”); this app mirrors that pattern in `ConsoleAuthController` and `resources/views/console/login.blade.php`.
+
+Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/auth/callback`**, then set in `.env` (see `.env.example`):
 
 | Variable | Purpose |
 |----------|---------|

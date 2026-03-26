@@ -66,6 +66,16 @@ See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verif
 
 This keeps the OSS project small. A full user table and Laravel Breeze/Fortify would be a larger follow-up if you want native multi-account auth.
 
+### Optional: Fleet Auth (OAuth login)
+
+You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password, using **[fleet/idp-client](https://github.com/shaferllc/fleet-idp-client)**. Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/auth/callback`**, then set in `.env` (see `.env.example`):
+
+| Variable | Purpose |
+|----------|---------|
+| `FLEET_IDP_URL` | Fleet Auth root URL only (not `/auth/callback`) |
+| `FLEET_IDP_CLIENT_ID` / `FLEET_IDP_CLIENT_SECRET` | OAuth client from Fleet Auth seeder |
+| `FLEET_IDP_REDIRECT_URI` | Default `${APP_URL}/auth/callback` — must match Passport |
+
 ## Releasing
 
 ### Fleet Console (this repository)

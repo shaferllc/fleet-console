@@ -7,6 +7,7 @@ use Fleet\IdpClient\FleetIdpPasswordGrant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View as ViewContract;
 
@@ -28,14 +29,14 @@ class ConsoleAuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => ['nullable', 'string', 'email', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string'],
         ]);
 
         $password = (string) $request->input('password');
-        $email = trim((string) $request->input('email', ''));
+        $email = Str::lower(trim((string) $request->input('email')));
 
-        if (FleetIdpPasswordGrant::isConfigured() && $email !== '') {
+        if (FleetIdpPasswordGrant::isConfigured()) {
             $user = FleetIdpPasswordGrant::attempt($email, $password);
             if (! $user instanceof Model) {
                 throw ValidationException::withMessages([
@@ -46,12 +47,6 @@ class ConsoleAuthController extends Controller
             $this->establishConsoleSession($request, $user);
 
             return redirect()->intended(route('console.dashboard'));
-        }
-
-        if (FleetIdpPasswordGrant::isConfigured() && $email === '' && ! self::localPasswordConfigured()) {
-            throw ValidationException::withMessages([
-                'email' => __('Enter your email and password for Fleet Auth, or use “Sign in with Fleet account”.'),
-            ]);
         }
 
         $expectedHash = config('fleet_console.password_hash');

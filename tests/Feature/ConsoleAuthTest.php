@@ -10,6 +10,19 @@ class ConsoleAuthTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_login_requires_email(): void
+    {
+        config([
+            'fleet_console.password' => 'secret',
+            'fleet_console.password_hash' => '',
+        ]);
+
+        $this->withoutMiddleware(VerifyCsrfToken::class);
+
+        $this->post(route('console.login'), ['password' => 'secret'])
+            ->assertSessionHasErrors('email');
+    }
+
     public function test_login_rejected_when_not_configured(): void
     {
         config([
@@ -19,8 +32,10 @@ class ConsoleAuthTest extends TestCase
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        $this->post(route('console.login'), ['password' => 'anything'])
-            ->assertSessionHasErrors('password');
+        $this->post(route('console.login'), [
+            'email' => 'operator@example.com',
+            'password' => 'anything',
+        ])->assertSessionHasErrors('password');
     }
 
     public function test_login_accepts_plain_password(): void
@@ -32,8 +47,10 @@ class ConsoleAuthTest extends TestCase
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        $this->post(route('console.login'), ['password' => 'plain-secret'])
-            ->assertRedirect(route('console.dashboard'));
+        $this->post(route('console.login'), [
+            'email' => 'operator@example.com',
+            'password' => 'plain-secret',
+        ])->assertRedirect(route('console.dashboard'));
 
         $this->assertTrue(session('fleet_console_ok'));
     }
@@ -48,8 +65,10 @@ class ConsoleAuthTest extends TestCase
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        $this->post(route('console.login'), ['password' => 'bcrypt-secret'])
-            ->assertRedirect(route('console.dashboard'));
+        $this->post(route('console.login'), [
+            'email' => 'operator@example.com',
+            'password' => 'bcrypt-secret',
+        ])->assertRedirect(route('console.dashboard'));
 
         $this->assertTrue(session('fleet_console_ok'));
     }
@@ -64,10 +83,14 @@ class ConsoleAuthTest extends TestCase
 
         $this->withoutMiddleware(VerifyCsrfToken::class);
 
-        $this->post(route('console.login'), ['password' => 'from-plain'])
-            ->assertSessionHasErrors('password');
+        $this->post(route('console.login'), [
+            'email' => 'operator@example.com',
+            'password' => 'from-plain',
+        ])->assertSessionHasErrors('password');
 
-        $this->post(route('console.login'), ['password' => 'from-hash'])
-            ->assertRedirect(route('console.dashboard'));
+        $this->post(route('console.login'), [
+            'email' => 'operator@example.com',
+            'password' => 'from-hash',
+        ])->assertRedirect(route('console.dashboard'));
     }
 }

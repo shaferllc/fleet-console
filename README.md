@@ -60,7 +60,7 @@ See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verif
 
 | Surface | Mechanism |
 |---------|-----------|
-| **Browser UI** | Shared console password → session flag `fleet_console_ok`, and/or **Fleet Auth** OAuth (authorization code) → same flag plus `fleet_idp_user` in session (`config/fleet_idp.php` defaults to `FLEET_IDP_WEB_MODE=session`). See **Optional: Fleet Auth** below. |
+| **Browser UI** | **Fleet Auth** via **`shaferllc/fleet-idp-client`**: OAuth (authorization code) and/or **email + password** using the password grant (`FLEET_IDP_PASSWORD_CLIENT_*`), which syncs users into the local `users` table. The sign-in form always requires **email** and **password**. A legacy **shared console password** (`FLEET_CONSOLE_PASSWORD*`) still works when the password grant is not configured; email is required on the form but only the password is checked. Session flag `fleet_console_ok` (+ optional `fleet_idp_user`). See **Optional: Fleet Auth** below. |
 | **`/api/fleet/*` JSON** | Bearer token (`FLEET_CONSOLE_API_TOKEN`); separate from the dashboard password. |
 | **Target operator APIs** | Each app uses its own secret (often `FLEET_OPERATOR_TOKEN` on that app); Fleet stores the matching token per service. |
 

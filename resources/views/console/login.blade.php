@@ -51,26 +51,14 @@
             <form method="post" action="{{ route('console.login') }}" class="space-y-6">
                 @csrf
                 <div>
-                    <label for="email" class="block text-sm font-medium text-zinc-300">
-                        @if (!empty($fleetPasswordLoginEnabled) && empty($localPasswordEnabled))
-                            {{ __('Email') }}
-                        @elseif (!empty($localPasswordEnabled) && empty($fleetPasswordLoginEnabled))
-                            {{ __('Email') }} <span class="font-normal text-zinc-500">({{ __('optional') }})</span>
-                        @else
-                            {{ __('Email') }} <span class="font-normal text-zinc-500">({{ __('optional for shared password') }})</span>
-                        @endif
-                    </label>
+                    <label for="email" class="block text-sm font-medium text-zinc-300">{{ __('Email') }}</label>
                     <input
                         type="email"
                         name="email"
                         id="email"
                         value="{{ old('email') }}"
-                        @if (!empty($fleetPasswordLoginEnabled) && empty($localPasswordEnabled))
-                            required
-                        @endif
-                        @if (!empty($fleetPasswordLoginEnabled))
-                            autofocus
-                        @endif
+                        required
+                        autofocus
                         class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
                         autocomplete="username"
                         placeholder="you@example.com"
@@ -81,11 +69,7 @@
                 </div>
                 @if (!empty($fleetPasswordLoginEnabled))
                     <p class="text-xs leading-relaxed text-zinc-500">
-                        {{ __('With email filled in, we verify your password against Fleet Auth and keep your user in sync.') }}
-                    </p>
-                @elseif (!empty($localPasswordEnabled))
-                    <p class="text-xs leading-relaxed text-zinc-500">
-                        {{ __('Leave email empty if your team only uses the shared console password from the server configuration.') }}
+                        {{ __('Use your Fleet Auth email and password.') }}
                     </p>
                 @endif
                 <div>
@@ -95,9 +79,6 @@
                         name="password"
                         id="password"
                         required
-                        @if (empty($fleetPasswordLoginEnabled))
-                            autofocus
-                        @endif
                         class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
                         autocomplete="current-password"
                         placeholder="••••••••"
@@ -113,12 +94,6 @@
             </form>
         @elseif (empty($fleetIdpEnabled))
             <p class="text-center text-sm text-zinc-400">{{ __('Console login is not configured.') }}</p>
-        @endif
-
-        @if (!empty($fleetPasswordLoginEnabled) && !empty($localPasswordEnabled))
-            <p class="mt-6 text-center text-xs leading-relaxed text-zinc-500">
-                {{ __('Leave email empty to use only the shared console password; fill email and password to use Fleet Auth credentials.') }}
-            </p>
         @endif
     </div>
     <p class="mt-8 text-center text-xs text-zinc-600">

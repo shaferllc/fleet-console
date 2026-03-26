@@ -22,10 +22,10 @@
 
         @if (!empty($fleetIdpEnabled))
             <div class="mb-6">
-                <a href="{{ route('console.login', ['sso' => '1']) }}"
-                    class="fc-btn-primary flex w-full items-center justify-center rounded-xl px-4 py-3 text-sm font-semibold text-white no-underline">
-                    Sign in with Fleet account
-                </a>
+                <x-fleet-idp::oauth-button
+                    :href="route('console.login', ['sso' => '1'])"
+                    variant="console"
+                />
             </div>
         @endif
 

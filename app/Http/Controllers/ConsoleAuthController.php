@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Fleet\IdpClient\FleetIdpOAuth;
+use Fleet\IdpClient\FleetIdpPasswordGrant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -18,6 +20,7 @@ class ConsoleAuthController extends Controller
 
         return view('console.login', [
             'fleetIdpEnabled' => FleetIdpOAuth::isConfigured(),
+            'fleetPasswordLoginEnabled' => FleetIdpPasswordGrant::isConfigured(),
             'localPasswordEnabled' => self::localPasswordConfigured(),
         ]);
     }
@@ -25,10 +28,32 @@ class ConsoleAuthController extends Controller
     public function login(Request $request): RedirectResponse
     {
         $request->validate([
+            'email' => ['nullable', 'string', 'email', 'max:255'],
             'password' => ['required', 'string'],
         ]);
 
         $password = (string) $request->input('password');
+        $email = trim((string) $request->input('email', ''));
+
+        if (FleetIdpPasswordGrant::isConfigured() && $email !== '') {
+            $user = FleetIdpPasswordGrant::attempt($email, $password);
+            if (! $user instanceof Model) {
+                throw ValidationException::withMessages([
+                    'email' => trans('auth.failed'),
+                ]);
+            }
+
+            $this->establishConsoleSession($request, $user);
+
+            return redirect()->intended(route('console.dashboard'));
+        }
+
+        if (FleetIdpPasswordGrant::isConfigured() && $email === '' && ! self::localPasswordConfigured()) {
+            throw ValidationException::withMessages([
+                'email' => __('Enter your email and password for Fleet Auth, or use “Sign in with Fleet account”.'),
+            ]);
+        }
+
         $expectedHash = config('fleet_console.password_hash');
         $expectedPlain = config('fleet_console.password');
 
@@ -55,6 +80,8 @@ class ConsoleAuthController extends Controller
         }
 
         $request->session()->put('fleet_console_ok', true);
+        $request->session()->forget('fleet_idp_user');
+        $request->session()->regenerate();
 
         return redirect()->intended(route('console.dashboard'));
     }
@@ -74,5 +101,16 @@ class ConsoleAuthController extends Controller
 
         return (is_string($expectedHash) && $expectedHash !== '')
             || (is_string($expectedPlain) && $expectedPlain !== '');
+    }
+
+    private function establishConsoleSession(Request $request, Model $user): void
+    {
+        $request->session()->put('fleet_console_ok', true);
+        $request->session()->put('fleet_idp_user', [
+            'id' => $user->getKey(),
+            'email' => $user->getAttribute('email'),
+            'name' => $user->getAttribute('name'),
+        ]);
+        $request->session()->regenerate();
     }
 }

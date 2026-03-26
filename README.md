@@ -60,11 +60,11 @@ See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verif
 
 | Surface | Mechanism |
 |---------|-----------|
-| **Browser UI** | Shared password → session flag (`fleet.console` middleware). Not multi-user; use SSO or a reverse proxy in front if you need identities. |
+| **Browser UI** | Shared console password → session flag `fleet_console_ok`, and/or **Fleet Auth** OAuth (authorization code) → same flag plus `fleet_idp_user` in session (`config/fleet_idp.php` defaults to `FLEET_IDP_WEB_MODE=session`). See **Optional: Fleet Auth** below. |
 | **`/api/fleet/*` JSON** | Bearer token (`FLEET_CONSOLE_API_TOKEN`); separate from the dashboard password. |
 | **Target operator APIs** | Each app uses its own secret (often `FLEET_OPERATOR_TOKEN` on that app); Fleet stores the matching token per service. |
 
-This keeps the OSS project small. A full user table and Laravel Breeze/Fortify would be a larger follow-up if you want native multi-account auth.
+This keeps the OSS project small: the console gate is session-based, not a full local user directory, unless you point Socialite / password grant at Fleet Auth and Eloquent users (advanced).
 
 ### Optional: Fleet Auth (OAuth login)
 
@@ -79,6 +79,8 @@ Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/a
 | `FLEET_IDP_REDIRECT_PATH` | `/auth/callback` (must match Passport) |
 | `FLEET_IDP_WEB_MODE` | `session` |
 | `FLEET_IDP_WEB_MIDDLEWARE` | `web,fleet.trusted_ip` when using trusted IPs |
+| `FLEET_IDP_PASSWORD_CLIENT_ID` / `FLEET_IDP_PASSWORD_CLIENT_SECRET` | Optional **password grant** client — when set, `/login` shows **email + password** (Fleet Auth credentials); users are mirrored into the local `users` table (`provider` / `provider_id`). |
+
 
 ## Releasing
 

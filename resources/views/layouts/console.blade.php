@@ -34,7 +34,15 @@
                         <p class="truncate text-xs text-zinc-500">Operator overview</p>
                     </div>
                 </a>
-                <div class="flex shrink-0 items-center gap-2 sm:gap-3">
+                <div class="flex min-w-0 shrink-0 items-center gap-2 sm:gap-3">
+                    @php
+                        $fleetIdpUser = session('fleet_idp_user');
+                    @endphp
+                    @if (is_array($fleetIdpUser) && filled($fleetIdpUser['email'] ?? null))
+                        <span class="hidden max-w-[16rem] truncate text-xs text-zinc-400 sm:inline" title="{{ $fleetIdpUser['email'] }}">
+                            {{ $fleetIdpUser['email'] }}
+                        </span>
+                    @endif
                     @yield('topbar_actions')
                 </div>
             </div>

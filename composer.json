@@ -21,7 +21,7 @@
     "require": {
         "php": "^8.4",
         "dply/fleet-operator": "@dev",
-        "shaferllc/fleet-idp-client": "^0.5",
+        "shaferllc/fleet-idp-client": "^0.6",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },

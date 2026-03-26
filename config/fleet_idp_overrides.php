@@ -18,7 +18,7 @@ return [
         'middleware' => array_values(array_filter(array_map('trim', explode(',', (string) env(
             'FLEET_IDP_WEB_MIDDLEWARE',
             'web,fleet.trusted_ip'
-        ))))),
+        ))))), 
         'mode' => env('FLEET_IDP_WEB_MODE', 'session'),
         'eloquent' => [
             'try_again_route' => env('FLEET_IDP_TRY_AGAIN_ROUTE', 'console.login'),

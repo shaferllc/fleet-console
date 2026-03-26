@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "bbe74862b0793755d2840e2963acd2e6",
+    "content-hash": "322c0d2b1004028b6cc627dd6f64a73d",
     "packages": [
         {
             "name": "brick/math",
@@ -3811,23 +3811,20 @@
         },
         {
             "name": "shaferllc/fleet-idp-client",
-            "version": "0.6.4",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/shaferllc/fleet-idp-client.git",
-                "reference": "119a7d96db2d0fb6d7a8f1352e7910fe5d900275"
-            },
+            "version": "0.9.26",
             "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/shaferllc/fleet-idp-client/zipball/119a7d96db2d0fb6d7a8f1352e7910fe5d900275",
-                "reference": "119a7d96db2d0fb6d7a8f1352e7910fe5d900275",
-                "shasum": ""
+                "type": "path",
+                "url": "../fleet-idp-client",
+                "reference": "65668287a1a6729ab08218c2621b7c630df9be4f"
             },
             "require": {
+                "illuminate/auth": "^12.0|^13.0",
                 "illuminate/console": "^12.0|^13.0",
                 "illuminate/contracts": "^12.0|^13.0",
                 "illuminate/database": "^12.0|^13.0",
                 "illuminate/http": "^12.0|^13.0",
+                "illuminate/notifications": "^12.0|^13.0",
+                "illuminate/routing": "^12.0|^13.0",
                 "illuminate/session": "^12.0|^13.0",
                 "illuminate/support": "^12.0|^13.0",
                 "laravel/socialite": "^5.0",
@@ -3850,11 +3847,10 @@
                 "MIT"
             ],
             "description": "Laravel client for Fleet central auth: Passport OAuth, optional password grant, Eloquent user sync, fleet:idp:configure CLI.",
-            "support": {
-                "source": "https://github.com/shaferllc/fleet-idp-client/tree/v0.6.4",
-                "issues": "https://github.com/shaferllc/fleet-idp-client/issues"
-            },
-            "time": "2026-03-26T01:31:56+00:00"
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "symfony/clock",

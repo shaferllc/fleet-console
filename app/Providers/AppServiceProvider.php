@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Support\FleetConsoleDynamicConfig;
+use Fleet\IdpClient\FleetIdpCustomization;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +13,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        FleetIdpCustomization::merge(require config_path('fleet_idp_overrides.php'));
     }
 
     /**
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        if ($this->app->runningInConsole()) {
+            FleetConsoleDynamicConfig::syncFromDatabase();
+        }
     }
 }

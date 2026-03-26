@@ -11,7 +11,7 @@ class SyncFleetTargetsFromDatabase
 {
     public function handle(Request $request, Closure $next): Response
     {
-        FleetConsoleDynamicConfig::syncTargetsFromDatabase();
+        FleetConsoleDynamicConfig::syncFromDatabase();
 
         return $next($request);
     }

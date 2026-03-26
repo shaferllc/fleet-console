@@ -3,7 +3,7 @@
 namespace App\Support;
 
 /**
- * Per-target overrides from config fleet_console.target_overrides (JSON in env).
+ * Per-target overrides merged from {@see FleetTarget} rows into config during {@see FleetConsoleDynamicConfig::syncFromDatabase()}.
  *
  * @phpstan-type OverrideShape array{
  *     mute_alerts?: bool|string,

@@ -3,7 +3,6 @@
 namespace App\Console\Commands;
 
 use App\Services\FleetTargetPoller;
-use App\Support\FleetConsoleDynamicConfig;
 use Illuminate\Console\Command;
 
 class PollFleetTargetsCommand extends Command
@@ -14,8 +13,6 @@ class PollFleetTargetsCommand extends Command
 
     public function handle(FleetTargetPoller $poller): int
     {
-        FleetConsoleDynamicConfig::syncTargetsFromDatabase();
-
         if (! config('fleet_console.background_poll_enabled')) {
             $this->comment('Skipped: FLEET_BACKGROUND_POLL_ENABLED is false.');
 

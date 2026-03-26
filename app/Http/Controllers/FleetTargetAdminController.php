@@ -6,9 +6,9 @@ use App\Http\Requests\ReorderFleetTargetsRequest;
 use App\Http\Requests\StoreFleetTargetRequest;
 use App\Http\Requests\UpdateFleetTargetRequest;
 use App\Models\FleetTarget;
-use App\Support\FleetTargetDefaultCatalog;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class FleetTargetAdminController extends Controller
@@ -22,7 +22,6 @@ class FleetTargetAdminController extends Controller
 
         return view('console.targets.index', [
             'targets' => $targets,
-            'catalogCount' => count(FleetTargetDefaultCatalog::catalogRows()),
         ]);
     }
 
@@ -33,7 +32,7 @@ class FleetTargetAdminController extends Controller
 
     public function store(StoreFleetTargetRequest $request): RedirectResponse
     {
-        $data = $request->validated();
+        $data = $this->mergeTargetAlertFields($request, $request->validated());
         $prefix = $data['operator_path_prefix'] ?? '/api/operator';
         $data['operator_path_prefix'] = '/'.ltrim(rtrim((string) $prefix, '/'), '/');
         $data['sort_order'] = (int) ($data['sort_order'] ?? 0);
@@ -53,7 +52,7 @@ class FleetTargetAdminController extends Controller
 
     public function update(UpdateFleetTargetRequest $request, FleetTarget $fleet_target): RedirectResponse
     {
-        $data = $request->validated();
+        $data = $this->mergeTargetAlertFields($request, $request->validated());
         unset($data['clear_operator_token']);
 
         $prefix = $data['operator_path_prefix'] ?? '/api/operator';
@@ -98,43 +97,47 @@ class FleetTargetAdminController extends Controller
         return response()->json(['ok' => true]);
     }
 
-    public function importDefaults(): RedirectResponse
+    /**
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function mergeTargetAlertFields(Request $request, array $data): array
     {
-        $rows = FleetTargetDefaultCatalog::catalogRows();
-        if ($rows === []) {
-            return redirect()
-                ->route('console.targets.index')
-                ->with('error', 'No built-in catalog found (config/fleet_targets.php).');
+        unset($data['alert_webhook_urls_json']);
+        $data['mute_alerts'] = $request->boolean('mute_alerts');
+        $data['alert_webhook_urls'] = $this->decodeAlertWebhookUrlsJson((string) $request->input('alert_webhook_urls_json', ''));
+
+        if (! array_key_exists('alert_slo_min_ok_percent', $data) || $data['alert_slo_min_ok_percent'] === '' || $data['alert_slo_min_ok_percent'] === null) {
+            $data['alert_slo_min_ok_percent'] = null;
         }
 
-        $imported = 0;
-        foreach ($rows as $i => $row) {
-            $exists = FleetTarget::query()->where('key', $row['key'])->exists();
-            if ($exists) {
-                continue;
-            }
-
-            FleetTarget::query()->create([
-                'key' => $row['key'],
-                'name' => $row['name'],
-                'description' => $row['description'] !== '' ? $row['description'] : null,
-                'base_url' => $row['base_url'],
-                'site_url' => $row['site_url'],
-                'staging_site_url' => $row['staging_site_url'] ?? null,
-                'operator_path_prefix' => $row['operator_path_prefix'],
-                'operator_token' => null,
-                'sort_order' => $i * 10,
-                'is_enabled' => true,
-            ]);
-            $imported++;
+        if (! array_key_exists('alert_slo_dedupe_hours', $data) || $data['alert_slo_dedupe_hours'] === '' || $data['alert_slo_dedupe_hours'] === null) {
+            $data['alert_slo_dedupe_hours'] = null;
         }
 
-        $msg = $imported > 0
-            ? "Imported {$imported} new service(s). Existing keys were left unchanged. Add an operator token per service under Edit — polling needs a token stored here for each app."
-            : 'All catalog services already exist — nothing to import.';
+        return $data;
+    }
 
-        return redirect()
-            ->route('console.targets.index')
-            ->with('status', $msg);
+    /**
+     * @return list<string>|null
+     */
+    private function decodeAlertWebhookUrlsJson(string $raw): ?array
+    {
+        $raw = trim($raw);
+        if ($raw === '') {
+            return null;
+        }
+
+        $decoded = json_decode($raw, true);
+        if (! is_array($decoded)) {
+            return null;
+        }
+
+        $out = array_values(array_filter(
+            $decoded,
+            static fn (mixed $u): bool => is_string($u) && filter_var($u, FILTER_VALIDATE_URL)
+        ));
+
+        return $out === [] ? null : $out;
     }
 }

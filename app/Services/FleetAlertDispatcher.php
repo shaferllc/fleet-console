@@ -82,7 +82,7 @@ class FleetAlertDispatcher
         $this->sendAll(
             "Fleet SLO: {$targetName} ({$targetKey}) below {$min}% OK (24h rolling)",
             'Observed '.$okPercent24h."% OK over stored polls in the last 24 hours.\n".
-            'Tune FLEET_ALERT_SLO_MIN_OK_PERCENT / per-target overrides or fix target reliability.',
+            'Tune Alert settings / per-service SLO overrides in the console, or fix target reliability.',
             $targetKey,
             'slo',
         );

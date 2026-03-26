@@ -10,19 +10,20 @@ class FleetTargetsApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fleetSettings()->update(['api_token' => 'tok']);
+    }
+
     public function test_index_lists_targets_without_operator_token(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.targets' => [
-                [
-                    'key' => 'alpha',
-                    'name' => 'Alpha',
-                    'base_url' => 'https://alpha.test',
-                    'operator_token' => 'super-secret',
-                    'description' => 'App one',
-                ],
-            ],
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
+            'operator_token' => 'super-secret',
+            'description' => 'App one',
         ]);
 
         $this->getJson('/api/fleet/targets', ['Authorization' => 'Bearer tok'])
@@ -38,16 +39,11 @@ class FleetTargetsApiTest extends TestCase
 
     public function test_index_includes_staging_site_when_configured(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.targets' => [
-                [
-                    'key' => 'alpha',
-                    'name' => 'Alpha',
-                    'base_url' => 'https://alpha.test',
-                    'staging_site_url' => 'https://staging.alpha.test',
-                ],
-            ],
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
+            'staging_site_url' => 'https://staging.alpha.test',
         ]);
 
         $this->getJson('/api/fleet/targets', ['Authorization' => 'Bearer tok'])
@@ -58,11 +54,10 @@ class FleetTargetsApiTest extends TestCase
 
     public function test_show_returns_same_shape_as_poll_detail_for_known_target(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
-            ],
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
         ]);
 
         FleetPollSample::query()->create([
@@ -95,11 +90,6 @@ class FleetTargetsApiTest extends TestCase
 
     public function test_show_404_for_unknown_target(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.targets' => [],
-        ]);
-
         $this->getJson('/api/fleet/targets/unknown', ['Authorization' => 'Bearer tok'])
             ->assertNotFound();
     }

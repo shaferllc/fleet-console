@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\ConsoleAuthController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FleetConsoleSettingsController;
+use App\Http\Controllers\FleetOperationalSettingsController;
 use App\Http\Controllers\FleetRefreshController;
 use App\Http\Controllers\FleetTargetAdminController;
 use App\Http\Controllers\FleetTargetDetailController;
@@ -14,11 +16,14 @@ Route::middleware('fleet.trusted_ip')->group(function (): void {
 
     Route::middleware('fleet.console')->group(function (): void {
         Route::get('/', DashboardController::class)->name('console.dashboard');
+        Route::get('/settings/console', [FleetOperationalSettingsController::class, 'edit'])->name('console.settings.operational');
+        Route::put('/settings/console', [FleetOperationalSettingsController::class, 'update'])->name('console.settings.operational.update');
+        Route::get('/settings/alerts', [FleetConsoleSettingsController::class, 'edit'])->name('console.settings.alerts');
+        Route::put('/settings/alerts', [FleetConsoleSettingsController::class, 'update'])->name('console.settings.alerts.update');
         Route::get('/targets', [FleetTargetAdminController::class, 'index'])->name('console.targets.index');
         Route::get('/targets/create', [FleetTargetAdminController::class, 'create'])->name('console.targets.create');
         Route::post('/targets', [FleetTargetAdminController::class, 'store'])->name('console.targets.store');
         Route::post('/targets/reorder', [FleetTargetAdminController::class, 'reorder'])->name('console.targets.reorder');
-        Route::post('/targets/import-defaults', [FleetTargetAdminController::class, 'importDefaults'])->name('console.targets.import');
         Route::get('/targets/{fleet_target}/edit', [FleetTargetAdminController::class, 'edit'])->name('console.targets.edit');
         Route::put('/targets/{fleet_target}', [FleetTargetAdminController::class, 'update'])->name('console.targets.update');
         Route::delete('/targets/{fleet_target}', [FleetTargetAdminController::class, 'destroy'])->name('console.targets.destroy');

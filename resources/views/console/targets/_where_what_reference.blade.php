@@ -28,7 +28,7 @@
                 <tr class="align-top">
                     <td class="px-3 py-2.5 font-medium text-zinc-300">Console login</td>
                     <td class="px-3 py-2.5">Fleet <code class="whitespace-nowrap rounded bg-zinc-950 px-1 py-0.5 font-mono text-[11px] text-cyan-200/90">.env</code></td>
-                    <td class="px-3 py-2.5 font-mono text-[11px] text-zinc-500 sm:text-xs">FLEET_CONSOLE_PASSWORD=…</td>
+                    <td class="px-3 py-2.5 font-mono text-[11px] text-zinc-500 sm:text-xs">FLEET_CONSOLE_PASSWORD_HASH=…</td>
                 </tr>
                 <tr class="align-top">
                     <td class="px-3 py-2.5 font-medium text-zinc-300">TLS errors when polling</td>

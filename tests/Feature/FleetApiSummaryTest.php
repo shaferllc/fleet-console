@@ -12,16 +12,16 @@ class FleetApiSummaryTest extends TestCase
 
     public function test_summary_returns_404_when_api_token_not_configured(): void
     {
-        config(['fleet_console.api_token' => '']);
+        $this->fleetSettings()->update(['api_token' => null]);
 
         $this->getJson('/api/fleet/summary', ['Authorization' => 'Bearer anything'])
             ->assertNotFound()
-            ->assertJsonFragment(['message' => 'Fleet read API is not configured (set FLEET_CONSOLE_API_TOKEN).']);
+            ->assertJsonFragment(['message' => 'Fleet read API is not configured (set an API token under Console → Console settings).']);
     }
 
     public function test_summary_returns_401_for_invalid_token(): void
     {
-        config(['fleet_console.api_token' => 'secret-token']);
+        $this->fleetSettings()->update(['api_token' => 'secret-token']);
 
         $this->getJson('/api/fleet/summary', ['Authorization' => 'Bearer wrong'])
             ->assertUnauthorized()
@@ -30,11 +30,11 @@ class FleetApiSummaryTest extends TestCase
 
     public function test_summary_accepts_x_fleet_api_token_header(): void
     {
-        config([
-            'fleet_console.api_token' => 'good-token',
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
-            ],
+        $this->fleetSettings()->update(['api_token' => 'good-token']);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
         ]);
 
         FleetPollSample::query()->create([
@@ -85,7 +85,7 @@ class FleetApiSummaryTest extends TestCase
 
     public function test_summary_invalid_since_returns_422(): void
     {
-        config(['fleet_console.api_token' => 't']);
+        $this->fleetSettings()->update(['api_token' => 't']);
 
         $this->getJson('/api/fleet/summary?since=not-a-date', ['Authorization' => 'Bearer t'])
             ->assertStatus(422)
@@ -94,12 +94,18 @@ class FleetApiSummaryTest extends TestCase
 
     public function test_summary_since_excludes_targets_whose_latest_poll_is_older(): void
     {
-        config([
-            'fleet_console.api_token' => 't',
-            'fleet_console.targets' => [
-                ['key' => 'stale', 'name' => 'Stale', 'base_url' => 'https://stale.test'],
-                ['key' => 'fresh', 'name' => 'Fresh', 'base_url' => 'https://fresh.test'],
-            ],
+        $this->fleetSettings()->update(['api_token' => 't']);
+        $this->installFleetTarget([
+            'key' => 'stale',
+            'name' => 'Stale',
+            'base_url' => 'https://stale.test',
+            'sort_order' => 0,
+        ]);
+        $this->installFleetTarget([
+            'key' => 'fresh',
+            'name' => 'Fresh',
+            'base_url' => 'https://fresh.test',
+            'sort_order' => 10,
         ]);
 
         FleetPollSample::query()->create([
@@ -132,12 +138,18 @@ class FleetApiSummaryTest extends TestCase
 
     public function test_summary_keys_parameter_filters_targets(): void
     {
-        config([
-            'fleet_console.api_token' => 't',
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
-                ['key' => 'beta', 'name' => 'Beta', 'base_url' => 'https://beta.test'],
-            ],
+        $this->fleetSettings()->update(['api_token' => 't']);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
+            'sort_order' => 0,
+        ]);
+        $this->installFleetTarget([
+            'key' => 'beta',
+            'name' => 'Beta',
+            'base_url' => 'https://beta.test',
+            'sort_order' => 10,
         ]);
 
         foreach (['alpha', 'beta'] as $key) {

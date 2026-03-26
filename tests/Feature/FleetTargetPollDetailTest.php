@@ -17,8 +17,6 @@ class FleetTargetPollDetailTest extends TestCase
 
     public function test_poll_detail_returns_404_for_unknown_target(): void
     {
-        config(['fleet_console.targets' => []]);
-
         $this->withSession(['fleet_console_ok' => true])
             ->getJson('/targets/unknown/poll-detail')
             ->assertNotFound();
@@ -26,9 +24,11 @@ class FleetTargetPollDetailTest extends TestCase
 
     public function test_poll_detail_returns_expected_json_shape(): void
     {
-        config(['fleet_console.targets' => [
-            ['key' => 'alpha', 'name' => 'Alpha App'],
-        ]]);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha App',
+            'base_url' => 'https://alpha.test',
+        ]);
 
         FleetPollSample::query()->create([
             'target_key' => 'alpha',

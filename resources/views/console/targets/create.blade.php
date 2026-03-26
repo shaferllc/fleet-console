@@ -58,7 +58,7 @@
                 <h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-500/90">2. On Fleet Console (this app)</h3>
                 <ul class="mt-3 list-disc space-y-2 pl-5 text-zinc-400">
                     <li>
-                        Sign in to this console with <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">FLEET_CONSOLE_PASSWORD</code>
+                        Sign in to this console with a bcrypt hash in <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">FLEET_CONSOLE_PASSWORD_HASH</code>
                         in <code class="font-mono text-xs text-zinc-300">.env</code> (separate from operator tokens).
                     </li>
                     <li>
@@ -71,9 +71,7 @@
                     </li>
                     <li>
                         <strong class="font-medium text-zinc-300">Key</strong> is a short slug (<code class="font-mono text-xs text-cyan-200/90">waypost</code>,
-                        <code class="font-mono text-xs text-cyan-200/90">beacon</code>, …). It appears in console URLs and stored polls; use the same key you would plug into
-                        <code class="rounded bg-zinc-950/90 px-1.5 py-0.5 font-mono text-xs text-zinc-300">FLEET_CONSOLE_TARGET_URL_TEMPLATE</code>
-                        if you used the file catalog (<code class="font-mono text-xs text-cyan-200/90">{key}</code>).
+                        <code class="font-mono text-xs text-cyan-200/90">beacon</code>, …). It appears in console URLs and stored polls — keep it stable across environments.
                     </li>
                     <li>
                         <strong class="font-medium text-zinc-300">Public site URL</strong> is optional: the “Open site” link in the dashboard. If empty, Fleet uses the operator base URL.

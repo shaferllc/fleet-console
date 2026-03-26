@@ -13,7 +13,7 @@ class EnsureFleetApiToken
         $expected = config('fleet_console.api_token');
         if (! is_string($expected) || $expected === '') {
             return response()->json([
-                'message' => 'Fleet read API is not configured (set FLEET_CONSOLE_API_TOKEN).',
+                'message' => 'Fleet read API is not configured (set an API token under Console → Console settings).',
             ], 404);
         }
 

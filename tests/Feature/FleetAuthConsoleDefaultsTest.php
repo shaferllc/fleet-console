@@ -3,10 +3,13 @@
 namespace Tests\Feature;
 
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class FleetAuthConsoleDefaultsTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_fleet_idp_web_defaults_to_session_mode_for_console(): void
     {
         $this->assertSame('session', config('fleet_idp.web.mode'));
@@ -56,7 +59,7 @@ class FleetAuthConsoleDefaultsTest extends TestCase
             ->assertSee('name="email"', false);
     }
 
-    public function test_login_page_shows_email_field_for_shared_console_password_only(): void
+    public function test_login_page_shows_email_field_for_shared_console_password_hash_only(): void
     {
         config([
             'fleet_idp.url' => '',
@@ -64,8 +67,10 @@ class FleetAuthConsoleDefaultsTest extends TestCase
             'fleet_idp.client_secret' => '',
             'fleet_idp.password_client_id' => '',
             'fleet_idp.password_client_secret' => '',
-            'fleet_console.password' => 'shared-secret',
-            'fleet_console.password_hash' => '',
+        ]);
+
+        $this->fleetSettings()->update([
+            'password_hash' => password_hash('shared-secret', PASSWORD_BCRYPT),
         ]);
 
         $this->get(route('console.login'))

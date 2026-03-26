@@ -18,6 +18,10 @@ class FleetTarget extends Model
         'operator_token',
         'sort_order',
         'is_enabled',
+        'mute_alerts',
+        'alert_slo_min_ok_percent',
+        'alert_slo_dedupe_hours',
+        'alert_webhook_urls',
     ];
 
     /**
@@ -27,7 +31,11 @@ class FleetTarget extends Model
     {
         return [
             'is_enabled' => 'boolean',
+            'mute_alerts' => 'boolean',
             'operator_token' => 'encrypted',
+            'alert_webhook_urls' => 'array',
+            'alert_slo_min_ok_percent' => 'float',
+            'alert_slo_dedupe_hours' => 'integer',
         ];
     }
 

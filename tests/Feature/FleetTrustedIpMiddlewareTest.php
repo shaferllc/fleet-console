@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\FleetAlertEvent;
 use App\Models\FleetPollSample;
+use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -13,9 +14,9 @@ class FleetTrustedIpMiddlewareTest extends TestCase
 
     public function test_health_is_not_blocked_by_trusted_ips(): void
     {
-        config([
-            'fleet_console.health_token' => '',
-            'fleet_console.trusted_ips' => '10.0.0.0/8',
+        $this->fleetSettings()->update([
+            'health_token' => null,
+            'trusted_ips' => '10.0.0.0/8',
         ]);
 
         $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.1'])
@@ -25,12 +26,14 @@ class FleetTrustedIpMiddlewareTest extends TestCase
 
     public function test_summary_blocked_when_ip_not_allowlisted(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.trusted_ips' => '10.0.0.0/8',
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
-            ],
+        $this->fleetSettings()->update([
+            'api_token' => 'tok',
+            'trusted_ips' => '10.0.0.0/8',
+        ]);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
         ]);
 
         FleetPollSample::query()->create([
@@ -54,9 +57,9 @@ class FleetTrustedIpMiddlewareTest extends TestCase
 
     public function test_alerts_blocked_when_ip_not_allowlisted(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.trusted_ips' => '10.0.0.0/8',
+        $this->fleetSettings()->update([
+            'api_token' => 'tok',
+            'trusted_ips' => '10.0.0.0/8',
         ]);
 
         FleetAlertEvent::query()->create([
@@ -80,19 +83,22 @@ class FleetTrustedIpMiddlewareTest extends TestCase
 
     public function test_login_routes_respect_trusted_ips(): void
     {
-        config([
-            'fleet_console.trusted_ips' => '10.0.0.0/8',
-            'fleet_console.password' => 'secret-login-test',
+        $this->fleetSettings()->update([
+            'trusted_ips' => '10.0.0.0/8',
+            'password_hash' => password_hash('secret-login-test', PASSWORD_BCRYPT),
         ]);
 
         $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.1'])
             ->get(route('console.login'))
             ->assertForbidden();
 
-        $this->withoutMiddleware(\Illuminate\Foundation\Http\Middleware\VerifyCsrfToken::class);
+        $this->withoutMiddleware(VerifyCsrfToken::class);
 
         $this->withServerVariables(['REMOTE_ADDR' => '127.0.0.1'])
-            ->post(route('console.login'), ['password' => 'wrong'])
+            ->post(route('console.login'), [
+                'email' => 'ops@example.com',
+                'password' => 'wrong',
+            ])
             ->assertForbidden();
 
         $this->withServerVariables(['REMOTE_ADDR' => '10.2.3.4'])

@@ -9,6 +9,18 @@
     >
         Services
     </a>
+    <a
+        href="{{ route('console.settings.operational') }}"
+        class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-cyan-500/35 hover:bg-zinc-800/70 hover:text-cyan-100"
+    >
+        Console
+    </a>
+    <a
+        href="{{ route('console.settings.alerts') }}"
+        class="rounded-lg border border-zinc-600/50 bg-zinc-900/50 px-3 py-2 text-xs font-medium text-zinc-300 transition hover:border-cyan-500/35 hover:bg-zinc-800/70 hover:text-cyan-100"
+    >
+        Alerts
+    </a>
     <button
         type="button"
         id="fleet-refresh-all"
@@ -60,9 +72,7 @@
             <p class="text-sm leading-relaxed text-amber-100/90">
                 No targets configured. Open
                 <a href="{{ route('console.targets.index') }}" class="font-medium text-cyan-300 underline decoration-cyan-500/40 underline-offset-2 hover:text-cyan-200">Services</a>
-                to add apps or import the built-in catalog. You can still use
-                <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">FLEET_CONSOLE_TARGETS</code>
-                in <code class="rounded-md bg-zinc-950/80 px-1.5 py-0.5 font-mono text-xs text-amber-200/90">.env</code> when the database list is empty.
+                to add at least one enabled app.
             </p>
         </div>
     @else

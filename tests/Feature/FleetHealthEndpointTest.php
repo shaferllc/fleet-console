@@ -11,7 +11,7 @@ class FleetHealthEndpointTest extends TestCase
 
     public function test_health_returns_ok_without_token_when_not_configured(): void
     {
-        config(['fleet_console.health_token' => '']);
+        $this->fleetSettings()->update(['health_token' => null]);
 
         $this->getJson('/api/fleet/health')
             ->assertOk()
@@ -21,7 +21,7 @@ class FleetHealthEndpointTest extends TestCase
 
     public function test_health_requires_token_when_configured(): void
     {
-        config(['fleet_console.health_token' => 'secret-health']);
+        $this->fleetSettings()->update(['health_token' => 'secret-health']);
 
         $this->getJson('/api/fleet/health')
             ->assertForbidden()

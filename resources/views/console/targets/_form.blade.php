@@ -147,4 +147,51 @@
             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
         @enderror
     </div>
+
+    <div class="border-t border-zinc-800/80 pt-6">
+        <h3 class="text-xs font-semibold uppercase tracking-[0.18em] text-cyan-500/90">Alerts (optional)</h3>
+        <p class="mt-2 text-xs leading-relaxed text-zinc-500">Global destinations live under <a href="{{ route('console.settings.alerts') }}" class="font-medium text-cyan-400 underline decoration-cyan-500/35 underline-offset-2 hover:text-cyan-300">Alert settings</a>. Here you can mute this service, override SLO thresholds, or add webhooks for this key only.</p>
+
+        <div class="mt-4">
+            <input type="hidden" name="mute_alerts" value="0">
+            <label class="flex items-center gap-2 text-sm text-zinc-300">
+                <input type="checkbox" name="mute_alerts" value="1" class="rounded border-zinc-600 bg-zinc-900 text-cyan-500 focus:ring-cyan-500/40"
+                    @checked(old('mute_alerts', $target?->mute_alerts))>
+                Mute all alerts for this service
+            </label>
+        </div>
+
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div>
+                <label for="alert_slo_min_ok_percent" class="block text-sm font-medium text-zinc-300">Override SLO min 24h OK %</label>
+                <input type="number" name="alert_slo_min_ok_percent" id="alert_slo_min_ok_percent" step="0.001" min="0" max="100"
+                    value="{{ old('alert_slo_min_ok_percent', $target?->alert_slo_min_ok_percent) }}"
+                    class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
+                    placeholder="Use global default if empty">
+                @error('alert_slo_min_ok_percent')
+                    <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+            <div>
+                <label for="alert_slo_dedupe_hours" class="block text-sm font-medium text-zinc-300">Override SLO dedupe (hours)</label>
+                <input type="number" name="alert_slo_dedupe_hours" id="alert_slo_dedupe_hours" min="1" max="8760"
+                    value="{{ old('alert_slo_dedupe_hours', $target?->alert_slo_dedupe_hours) }}"
+                    class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 text-sm text-white placeholder:text-zinc-600"
+                    placeholder="Use global default if empty">
+                @error('alert_slo_dedupe_hours')
+                    <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                @enderror
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <label for="alert_webhook_urls_json" class="block text-sm font-medium text-zinc-300">Extra webhook URLs (JSON array)</label>
+            <textarea name="alert_webhook_urls_json" id="alert_webhook_urls_json" rows="3"
+                class="fc-input mt-2 block w-full rounded-xl border border-zinc-700/80 bg-zinc-950/80 px-4 py-3 font-mono text-xs text-zinc-200 placeholder:text-zinc-600"
+                placeholder='["https://example.com/hook"]'>{{ old('alert_webhook_urls_json', isset($target) && $target !== null && is_array($target->alert_webhook_urls) && $target->alert_webhook_urls !== [] ? json_encode($target->alert_webhook_urls, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : '') }}</textarea>
+            @error('alert_webhook_urls_json')
+                <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+            @enderror
+        </div>
+    </div>
 </div>

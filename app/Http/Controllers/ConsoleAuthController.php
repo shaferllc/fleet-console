@@ -50,28 +50,19 @@ class ConsoleAuthController extends Controller
         }
 
         $expectedHash = config('fleet_console.password_hash');
-        $expectedPlain = config('fleet_console.password');
 
         if (! self::localPasswordConfigured()) {
             throw ValidationException::withMessages([
                 'password' => FleetIdpOAuth::isConfigured()
-                    ? __('Use “Sign in with Fleet account” or configure a local console password.')
-                    : __('Fleet console login is not configured (set FLEET_IDP_* or FLEET_CONSOLE_PASSWORD_HASH / FLEET_CONSOLE_PASSWORD).'),
+                    ? __('Use “Sign in with Fleet account” or configure a local console password hash.')
+                    : __('Fleet console login is not configured (set FLEET_IDP_* or FLEET_CONSOLE_PASSWORD_HASH).'),
             ]);
         }
 
-        if (is_string($expectedHash) && $expectedHash !== '') {
-            if (! password_verify($password, $expectedHash)) {
-                throw ValidationException::withMessages([
-                    'password' => __('Invalid password.'),
-                ]);
-            }
-        } elseif (is_string($expectedPlain) && $expectedPlain !== '') {
-            if (! hash_equals(hash('sha256', $expectedPlain), hash('sha256', $password))) {
-                throw ValidationException::withMessages([
-                    'password' => __('Invalid password.'),
-                ]);
-            }
+        if (is_string($expectedHash) && $expectedHash !== '' && ! password_verify($password, $expectedHash)) {
+            throw ValidationException::withMessages([
+                'password' => __('Invalid password.'),
+            ]);
         }
 
         $request->session()->put('fleet_console_ok', true);
@@ -92,10 +83,8 @@ class ConsoleAuthController extends Controller
     private static function localPasswordConfigured(): bool
     {
         $expectedHash = config('fleet_console.password_hash');
-        $expectedPlain = config('fleet_console.password');
 
-        return (is_string($expectedHash) && $expectedHash !== '')
-            || (is_string($expectedPlain) && $expectedPlain !== '');
+        return is_string($expectedHash) && $expectedHash !== '';
     }
 
     private function establishConsoleSession(Request $request, Model $user): void

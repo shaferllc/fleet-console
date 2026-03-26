@@ -12,11 +12,12 @@ class FleetDashboardVisibilityTest extends TestCase
 
     public function test_dashboard_includes_fleet_comparison_for_authenticated_user(): void
     {
-        config([
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test', 'operator_token' => 't'],
-            ],
-            'fleet_console.http_verify' => false,
+        $this->fleetSettings()->update(['http_verify' => false]);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
+            'operator_token' => 't',
         ]);
 
         FleetPollSample::query()->create([

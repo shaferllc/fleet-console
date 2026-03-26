@@ -10,18 +10,20 @@ class FleetAlertsApiTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fleetSettings()->update(['api_token' => 'tok']);
+    }
+
     public function test_requires_valid_token(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         $this->getJson('/api/fleet/alerts', ['Authorization' => 'Bearer wrong'])
             ->assertUnauthorized();
     }
 
     public function test_returns_events_newest_first_with_filters(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         FleetAlertEvent::query()->create([
             'target_key' => 'a',
             'type' => 'down',
@@ -55,16 +57,12 @@ class FleetAlertsApiTest extends TestCase
 
     public function test_invalid_since_returns_422(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         $this->getJson('/api/fleet/alerts?since=bad', ['Authorization' => 'Bearer tok'])
             ->assertStatus(422);
     }
 
     public function test_target_key_and_type_filters(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         FleetAlertEvent::query()->create([
             'target_key' => 'alpha',
             'type' => 'down',
@@ -97,8 +95,6 @@ class FleetAlertsApiTest extends TestCase
 
     public function test_oversized_query_params_return_422(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         $this->getJson('/api/fleet/alerts?target_key='.str_repeat('x', 65), ['Authorization' => 'Bearer tok'])
             ->assertStatus(422);
 
@@ -108,8 +104,6 @@ class FleetAlertsApiTest extends TestCase
 
     public function test_limit_is_capped_at_100(): void
     {
-        config(['fleet_console.api_token' => 'tok']);
-
         for ($i = 0; $i < 5; $i++) {
             FleetAlertEvent::query()->create([
                 'target_key' => 'x',

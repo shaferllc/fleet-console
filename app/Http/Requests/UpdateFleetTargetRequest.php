@@ -2,12 +2,15 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Requests\Concerns\ValidatesFleetTargetAlertJson;
 use App\Models\FleetTarget;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
 class UpdateFleetTargetRequest extends FormRequest
 {
+    use ValidatesFleetTargetAlertJson;
+
     public function authorize(): bool
     {
         return (bool) $this->session()->get('fleet_console_ok');
@@ -38,6 +41,10 @@ class UpdateFleetTargetRequest extends FormRequest
             'clear_operator_token' => ['sometimes', 'boolean'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:2147483647'],
             'is_enabled' => ['sometimes', 'boolean'],
+            'mute_alerts' => ['sometimes', 'boolean'],
+            'alert_slo_min_ok_percent' => ['nullable', 'numeric', 'min:0', 'max:100'],
+            'alert_slo_dedupe_hours' => ['nullable', 'integer', 'min:1', 'max:8760'],
+            'alert_webhook_urls_json' => ['nullable', 'string', 'max:32000'],
         ];
     }
 }

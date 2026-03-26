@@ -9,18 +9,20 @@ class FleetOpenApiJsonTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        $this->fleetSettings()->update(['api_token' => 'secret']);
+    }
+
     public function test_openapi_json_requires_api_token(): void
     {
-        config(['fleet_console.api_token' => 'secret']);
-
         $this->getJson('/api/fleet/openapi.json')
             ->assertUnauthorized();
     }
 
     public function test_openapi_json_returns_document(): void
     {
-        config(['fleet_console.api_token' => 'secret']);
-
         $response = $this->getJson('/api/fleet/openapi.json', ['Authorization' => 'Bearer secret'])
             ->assertOk()
             ->assertJsonPath('openapi', '3.0.3');
@@ -32,6 +34,6 @@ class FleetOpenApiJsonTest extends TestCase
         $this->assertSame('JSON fleet snapshot', $paths['/api/fleet/summary']['get']['summary']);
         $this->assertSame('Recent alert dispatch audit log (newest first)', $paths['/api/fleet/alerts']['get']['summary']);
         $this->assertSame('Prometheus exposition format', $paths['/api/fleet/metrics']['get']['summary']);
-        $this->assertSame('DB liveness (optional FLEET_HEALTH_TOKEN)', $paths['/api/fleet/health']['get']['summary']);
+        $this->assertStringContainsString('DB liveness', $paths['/api/fleet/health']['get']['summary']);
     }
 }

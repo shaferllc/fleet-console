@@ -6,7 +6,7 @@ Thanks for helping improve Fleet Console.
 
 1. PHP **8.4+**, Composer, Node.js for the Vite asset build.
 2. Copy `.env.example` to `.env`, run `php artisan key:generate`, then `php artisan migrate`.
-3. Set `FLEET_CONSOLE_PASSWORD` or `FLEET_CONSOLE_PASSWORD_HASH` so you can sign in at `/login`.
+3. Set `FLEET_CONSOLE_PASSWORD_HASH` so you can sign in at `/login` (or configure Fleet IdP password grant / OAuth).
 4. `composer install` and `npm install`.
 5. `php artisan test` and `./vendor/bin/pint` before opening a pull request.
 

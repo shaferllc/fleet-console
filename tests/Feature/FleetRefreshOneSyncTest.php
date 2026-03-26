@@ -13,11 +13,12 @@ class FleetRefreshOneSyncTest extends TestCase
 
     public function test_refresh_one_returns_card_stats_strip_and_compare_row_html(): void
     {
-        config([
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test', 'operator_token' => 'tok'],
-            ],
-            'fleet_console.http_verify' => false,
+        $this->fleetSettings()->update(['http_verify' => false]);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
+            'operator_token' => 'tok',
         ]);
 
         FleetPollSample::query()->create([

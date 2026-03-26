@@ -13,11 +13,11 @@ class FleetPrometheusMetricsTest extends TestCase
 
     public function test_metrics_returns_prometheus_text(): void
     {
-        config([
-            'fleet_console.api_token' => 'tok',
-            'fleet_console.targets' => [
-                ['key' => 'alpha', 'name' => 'Alpha', 'base_url' => 'https://alpha.test'],
-            ],
+        $this->fleetSettings()->update(['api_token' => 'tok']);
+        $this->installFleetTarget([
+            'key' => 'alpha',
+            'name' => 'Alpha',
+            'base_url' => 'https://alpha.test',
         ]);
 
         FleetPollSample::query()->create([

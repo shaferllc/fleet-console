@@ -6,7 +6,7 @@ Built with [Laravel](https://laravel.com) and PHP **8.4+**.
 
 ## Features
 
-- Password-protected **console** (session) — one shared secret for small teams; optional **bcrypt hash** in `.env` instead of a plain password.
+- Password-protected **console** (session) — one shared secret for small teams via **bcrypt hash** in `.env` (`FLEET_CONSOLE_PASSWORD_HASH`).
 - **Services** (targets) with base URL, operator path prefix, per-service tokens, sort order, and enable/disable.
 - **Dashboard** with comparison, per-service cards, sparklines, and alert timeline.
 - **Read-only HTTP API** under `/api/fleet/*` when `FLEET_CONSOLE_API_TOKEN` is set (bearer or `X-Fleet-Api-Token`).
@@ -33,7 +33,7 @@ Configure at minimum:
 
 | Variable | Purpose |
 |----------|---------|
-| `FLEET_CONSOLE_PASSWORD_HASH` or `FLEET_CONSOLE_PASSWORD` | Sign in to the web UI |
+| `FLEET_CONSOLE_PASSWORD_HASH` | Sign in to the web UI (when Fleet IdP password grant is not used) |
 
 After first login, add each monitored app under **Console → Services** and set an **operator token** per service (same value as `FLEET_OPERATOR_TOKEN` on that app). Tokens are not configured via Fleet’s `.env`.
 
@@ -52,15 +52,15 @@ composer run setup   # or: composer install && npm install && npm run build
 php artisan serve
 ```
 
-Open `/login`, then add or import services under **Console → Services**. Example seed rows live in `config/fleet_targets.php`; once the database has targets, the UI uses stored rows instead of the file list.
+Open `/login`, then add services under **Console → Services** (stored in the database). The poller and dashboard read enabled rows from the `fleet_targets` table (synced into config on each request and when `fleet:poll-targets` runs).
 
-See `.env.example` for polling, alerts, SLO, CORS, health checks, and HTTP verify options.
+See `.env.example` for CORS and optional `FLEET_CONSOLE_PASSWORD_HASH` bootstrap. **Console → Console settings** and **Console → Alerts** (plus per-service forms) hold operational and alert configuration in the database; runtime values are merged into `config('fleet_console.*')` on each request (no `config/fleet_console.php` file).
 
 ## Authentication model
 
 | Surface | Mechanism |
 |---------|-----------|
-| **Browser UI** | **Fleet Auth** via **`shaferllc/fleet-idp-client`**: OAuth (authorization code) and/or **email + password** using the password grant (`FLEET_IDP_PASSWORD_CLIENT_*`), which syncs users into the local `users` table. The sign-in form always requires **email** and **password**. A legacy **shared console password** (`FLEET_CONSOLE_PASSWORD*`) still works when the password grant is not configured; email is required on the form but only the password is checked. Session flag `fleet_console_ok` (+ optional `fleet_idp_user`). See **Optional: Fleet Auth** below. |
+| **Browser UI** | **Fleet Auth** via **`shaferllc/fleet-idp-client`**: OAuth (authorization code) and/or **email + password** using the password grant (`FLEET_IDP_PASSWORD_CLIENT_*`), which syncs users into the local `users` table. The sign-in form always requires **email** and **password**. When the password grant is not configured, a **bcrypt-hashed shared console secret** (`FLEET_CONSOLE_PASSWORD_HASH`) is verified instead; email is required on the form but only the password is checked against that hash. Session flag `fleet_console_ok` (+ optional `fleet_idp_user`). See **Optional: Fleet Auth** below. |
 | **`/api/fleet/*` JSON** | Bearer token (`FLEET_CONSOLE_API_TOKEN`); separate from the dashboard password. |
 | **Target operator APIs** | Each app uses its own secret (often `FLEET_OPERATOR_TOKEN` on that app); Fleet stores the matching token per service. |
 
@@ -68,7 +68,7 @@ This keeps the OSS project small: the console gate is session-based, not a full 
 
 ### Optional: Fleet Auth (OAuth login)
 
-You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) the shared console password via **`shaferllc/fleet-idp-client`** ([Packagist](https://packagist.org/packages/shaferllc/fleet-idp-client)). The package registers **`GET /oauth/fleet-auth`** → IdP and **`GET /auth/callback`** (when `FLEET_IDP_REDIRECT_PATH=/auth/callback`) for the return URL; use **`FLEET_IDP_WEB_MODE=session`** and **`FLEET_IDP_WEB_MIDDLEWARE=web,fleet.trusted_ip`** so OAuth endpoints respect the same IP allowlist as `/login`. The login Blade template includes **`x-fleet-idp::oauth-button variant="console"`**.
+You can sign in with **[Fleet Auth](https://github.com/shaferllc/fleet-auth)** instead of (or alongside) `FLEET_CONSOLE_PASSWORD_HASH` via **`shaferllc/fleet-idp-client`** ([Packagist](https://packagist.org/packages/shaferllc/fleet-idp-client)). The package registers **`GET /oauth/fleet-auth`** → IdP and **`GET /auth/callback`** (when `FLEET_IDP_REDIRECT_PATH=/auth/callback`) for the return URL; use **`FLEET_IDP_WEB_MODE=session`** and **`FLEET_IDP_WEB_MIDDLEWARE=web,fleet.trusted_ip`** so OAuth endpoints respect the same IP allowlist as `/login`. The login Blade template includes **`x-fleet-idp::oauth-button variant="console"`**.
 
 Register an authorization-code client in Fleet Auth with redirect **`{APP_URL}/auth/callback`**, then set in `.env` (see `.env.example`):
 

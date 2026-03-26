@@ -8,6 +8,13 @@
     "repositories": [
         {
             "type": "path",
+            "url": "../fleet-idp-client",
+            "options": {
+                "symlink": true
+            }
+        },
+        {
+            "type": "path",
             "url": "./fleet-operator",
             "options": {
                 "symlink": true
@@ -17,6 +24,7 @@
     "require": {
         "php": "^8.4",
         "dply/fleet-operator": "@dev",
+        "fleet/idp-client": "@dev",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },

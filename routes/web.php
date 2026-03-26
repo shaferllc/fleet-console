@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('fleet.trusted_ip')->group(function (): void {
     Route::get('/login', [ConsoleAuthController::class, 'showLogin'])->name('console.login');
     Route::post('/login', [ConsoleAuthController::class, 'login']);
+    Route::get('/auth/callback', [ConsoleAuthController::class, 'idpCallback'])->name('console.auth.callback');
 
     Route::middleware('fleet.console')->group(function (): void {
         Route::get('/', DashboardController::class)->name('console.dashboard');

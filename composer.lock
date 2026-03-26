@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b0362929ba34aec8c2cbe45e91cff9fe",
+    "content-hash": "5c6db0d38b7439c97154f115e33c3bae",
     "packages": [
         {
             "name": "brick/math",
@@ -383,13 +383,16 @@
             "dist": {
                 "type": "path",
                 "url": "./fleet-operator",
-                "reference": "2483d00cdf09803bee5aa74c7ee90732ffbf5ade"
+                "reference": "e63a8722579bd128992b35bb0f4c8002a34fa542"
             },
             "require": {
                 "illuminate/contracts": "^11.0|^12.0|^13.0",
                 "illuminate/http": "^11.0|^12.0|^13.0",
                 "illuminate/support": "^11.0|^12.0|^13.0",
                 "php": "^8.4"
+            },
+            "replace": {
+                "fleetphp/fleet-operator": "*"
             },
             "require-dev": {
                 "orchestra/testbench": "^9.0|^10.0|^11.0",
@@ -426,14 +429,21 @@
                     "name": "Fleet Console contributors"
                 }
             ],
-            "description": "Laravel middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
+            "description": "PHP middleware, config, and OpenAPI spec for Fleet Console operator APIs (GET …/summary and …/readme).",
+            "homepage": "https://github.com/shaferllc/fleet-operator",
             "keywords": [
                 "fleet",
-                "laravel",
+                "http",
+                "middleware",
                 "monitoring",
                 "openapi",
-                "operator"
+                "operator",
+                "php"
             ],
+            "support": {
+                "issues": "https://github.com/shaferllc/fleet-operator/issues",
+                "source": "https://github.com/shaferllc/fleet-operator"
+            },
             "transport-options": {
                 "symlink": true,
                 "relative": true
@@ -569,6 +579,44 @@
                 }
             ],
             "time": "2025-03-06T22:45:56+00:00"
+        },
+        {
+            "name": "fleet/idp-client",
+            "version": "dev-main",
+            "dist": {
+                "type": "path",
+                "url": "../fleet-idp-client",
+                "reference": "ae52e89a9a384cea22617348b2524283030c00d3"
+            },
+            "require": {
+                "illuminate/contracts": "^12.0|^13.0",
+                "illuminate/database": "^12.0|^13.0",
+                "illuminate/http": "^12.0|^13.0",
+                "illuminate/session": "^12.0|^13.0",
+                "illuminate/support": "^12.0|^13.0",
+                "php": "^8.3"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Fleet\\IdpClient\\FleetIdpServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Fleet\\IdpClient\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "description": "Laravel client for Fleet central auth: Passport OAuth, optional password grant, Eloquent user sync.",
+            "transport-options": {
+                "symlink": true,
+                "relative": true
+            }
         },
         {
             "name": "fruitcake/php-cors",
@@ -8093,7 +8141,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "dply/fleet-operator": 20
+        "dply/fleet-operator": 20,
+        "fleet/idp-client": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

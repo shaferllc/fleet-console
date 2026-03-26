@@ -29,7 +29,7 @@
     "require": {
         "php": "^8.4",
         "dply/fleet-operator": "@dev",
-        "fleet/idp-client": "^0.1",
+        "fleet/idp-client": "^0.2",
         "laravel/framework": "^13.0",
         "laravel/tinker": "^3.0"
     },

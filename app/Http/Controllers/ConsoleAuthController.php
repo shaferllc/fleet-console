@@ -7,7 +7,6 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View as ViewContract;
-use Throwable;
 
 class ConsoleAuthController extends Controller
 {
@@ -17,56 +16,10 @@ class ConsoleAuthController extends Controller
             return redirect()->route('console.dashboard');
         }
 
-        if ($request->query('sso') === '1' && FleetIdpOAuth::isConfigured()) {
-            return redirect()->away(FleetIdpOAuth::authorizationRedirectUrl());
-        }
-
         return view('console.login', [
             'fleetIdpEnabled' => FleetIdpOAuth::isConfigured(),
             'localPasswordEnabled' => self::localPasswordConfigured(),
         ]);
-    }
-
-    public function idpCallback(Request $request): RedirectResponse
-    {
-        if (! FleetIdpOAuth::isConfigured()) {
-            abort(404);
-        }
-
-        if ($request->query('error')) {
-            return redirect()->route('console.login')
-                ->withErrors(['password' => (string) $request->query('error_description', __('Sign-in was cancelled or failed.'))]);
-        }
-
-        $request->validate([
-            'code' => ['required', 'string'],
-            'state' => ['required', 'string'],
-        ]);
-
-        $stateKey = (string) config('fleet_idp.session_oauth_state_key');
-        $expected = $request->session()->pull($stateKey);
-        if (! is_string($expected) || ! hash_equals($expected, (string) $request->query('state'))) {
-            return redirect()->route('console.login')
-                ->withErrors(['password' => __('Invalid sign-in session. Please try again.')]);
-        }
-
-        try {
-            $tokens = FleetIdpOAuth::exchangeCode((string) $request->query('code'));
-            $user = FleetIdpOAuth::fetchUser($tokens['access_token']);
-        } catch (Throwable) {
-            return redirect()->route('console.login')
-                ->withErrors(['password' => __('Could not complete sign-in. Please try again.')]);
-        }
-
-        $request->session()->put('fleet_console_ok', true);
-        $request->session()->put('fleet_idp_user', [
-            'id' => $user['id'],
-            'email' => $user['email'],
-            'name' => $user['name'],
-        ]);
-        $request->session()->regenerate();
-
-        return redirect()->intended(route('console.dashboard'));
     }
 
     public function login(Request $request): RedirectResponse

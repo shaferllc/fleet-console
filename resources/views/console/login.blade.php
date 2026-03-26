@@ -22,10 +22,7 @@
 
         @if (!empty($fleetIdpEnabled))
             <div class="mb-6">
-                <x-fleet-idp::oauth-button
-                    :href="route('console.login', ['sso' => '1'])"
-                    variant="console"
-                />
+                <x-fleet-idp::oauth-button variant="console" />
             </div>
         @endif
 
